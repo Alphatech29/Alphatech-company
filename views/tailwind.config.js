@@ -1,3 +1,5 @@
+import flowbite from "flowbite/plugin";
+
 // tailwind.config.js
 export default {
   content: [
@@ -51,5 +53,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [flowbite,],
 };

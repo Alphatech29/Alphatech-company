@@ -1,37 +1,43 @@
 // TestimonialCarousel.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
-const testimonials = [
-  {
-    name: "Mrs Esther",
-    designation: "CEO Fundmax",
-    text: "This software company delivered excellent solutions and made the entire process seamless.",
-  },
-  {
-    name: "Franklin Johnson",
-    designation: "CEO, TechCorp",
-    text: "Professional, creative, and reliable. They built exactly what we needed on time.",
-  },
-  {
-    name: "Mr Morten",
-    designation: "Founder, Paysparq",
-    text: "Great attention to detail and client satisfaction. Highly recommended.",
-  },
-  {
-    name: "Mr Michael",
-    designation: "CTO, InnovateNow",
-    text: "Their technical expertise is top-notch, and communication was excellent throughout.",
-  },
-  {
-    name: "Sarah Johnson",
-    designation: "Manager, Betreaders",
-    text: "We are impressed with their dedication and problem-solving skills.",
-  },
-];
+import { getTestimonies } from "../utilities/testimonies";
 
 const TestimonialCarousel = () => {
+  const [testimonials, setTestimonials] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
+
+  // Fetch testimonies from API
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await getTestimonies();
+
+      if (response.success && Array.isArray(response.data)) {
+        setTestimonials(response.data);
+      } else {
+        console.error("Failed to load testimonies:", response.message);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Convert rating number to star icons
+  const renderStars = (rating) => {
+    if (!rating || rating <= 0) return null;
+    const totalStars = 5;
+    const filledStars = Math.round((rating / 10) * totalStars);
+
+    return (
+      <div className="flex justify-center mt-2">
+        {Array.from({ length: totalStars }, (_, i) => (
+          <span key={i} className={`text-yellow-500 text-sm ${i < filledStars ? "" : "opacity-30"}`}>
+            ★
+          </span>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <section className="py-16 bg-gradient-to-br from-primary-100 to-primary-200 overflow-hidden">
@@ -60,14 +66,15 @@ const TestimonialCarousel = () => {
                 className="bg-white shadow-lg rounded-2xl p-6 w-[300px] flex-shrink-0"
               >
                 <p className="text-primary-700 text-sm leading-relaxed text-center">
-                  “{testimonial.text}”
+                  “{testimonial.message}”
                 </p>
                 <h3 className="mt-4 text-sm font-semibold text-primary-900">
                   {testimonial.name}
                 </h3>
                 <span className="text-xs text-primary-500">
-                  {testimonial.designation}
+                  {testimonial.position || "Client"}
                 </span>
+                {renderStars(testimonial.rating)}
               </div>
             ))}
           </motion.div>

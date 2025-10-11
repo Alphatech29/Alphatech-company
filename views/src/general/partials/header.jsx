@@ -27,7 +27,7 @@ export default function Header() {
         scrolled ? "bg-primary-800/90" : "bg-transparent"
       }`}
     >
-      <div className="flex justify-between items-center text-primary-100 font-medium py-4 mobile:px-4 pc:px-[5rem]">
+      <div className="flex justify-between items-center text-primary-100 font-medium py-2 mobile:px-2 pc:px-[5rem]">
         {/* Logo */}
         <div className="text-2xl font-bold text-primary-200">
           <NavLink to="/">
