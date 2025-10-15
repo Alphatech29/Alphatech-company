@@ -32,7 +32,7 @@
       background: linear-gradient(135deg, #4B0082, #DAA520);
       color: #fff;
       text-align: center;
-      padding: 50px 25px 40px;
+      padding: 30px 15px 20px;
       position: relative;
     }
 
@@ -51,7 +51,7 @@
     .logo {
       display: block;
       margin: 0 auto 15px;
-      width: 80px;
+      width: 10rem;
       height: auto;
     }
 
@@ -174,7 +174,11 @@
   <div class="wrapper">
     <!-- HEADER -->
     <div class="header">
-      <h1><%= site_name %></h1>
+      <img
+        src="<%= site_url %><%= site_avatar %>"
+        alt="AlphaTech Logo"
+        class="logo"
+      />
       <p>Official Communication.</p>
     </div>
 
@@ -183,7 +187,10 @@
       <p class="greeting">Dear <strong><%= name %></strong>,</p>
 
       <div class="message">
-        <%- message.split(/\n\s*\n/).map(p => `<p>${p.trim().replace(/\n/g, '<br>')}</p>`).join('') %>
+        <%- message
+          .split(/\n\s*\n/)
+          .map(p => `<p>${p.trim().replace(/\n/g, '<br>')}</p>`)
+          .join('') %>
       </div>
 
       <div class="signature">
@@ -201,7 +208,7 @@
     <div class="footer">
       <p>
         © <%= new Date().getFullYear() %> <strong><%= site_name %></strong>. All Rights Reserved.<br />
-        <em><%= site_name %> — We are Redefining Innovation.</em>
+        <em><%= site_name %> — Let’s turn your imagination into reality.</em>
       </p>
 
       <p style="margin-top: 8px;">

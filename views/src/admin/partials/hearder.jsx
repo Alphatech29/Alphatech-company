@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaBars, FaBell, FaUserCircle } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../../utilities/authContext";
-
 
 export default function Header({ toggleSidebar }) {
   const [open, setOpen] = useState(false);
@@ -19,19 +19,15 @@ export default function Header({ toggleSidebar }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-   const handleLogout = () => {
+  const handleLogout = () => {
     logout();
   };
 
-
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-white shadow flex items-center justify-between px-4 z-30 lg:pl-64">
-      {/* Left: Hamburger */}
+      {/* Left: Hamburger and Title */}
       <div className="flex items-center space-x-3">
-        <button
-          className="lg:hidden text-gray-600"
-          onClick={toggleSidebar}
-        >
+        <button className="lg:hidden text-gray-600" onClick={toggleSidebar}>
           <FaBars size={22} />
         </button>
         <h1 className="text-lg font-bold text-purple-700">Dashboard</h1>
@@ -57,19 +53,36 @@ export default function Header({ toggleSidebar }) {
             <div className="absolute right-0 mt-4 w-40 bg-white border rounded-lg shadow-lg">
               <ul className="py-1 text-sm text-gray-700">
                 <li>
-                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100">
+                  <NavLink
+                    to="/dashboard/profile"
+                    className={({ isActive }) =>
+                      `block px-4 py-2 hover:bg-gray-100 ${
+                        isActive ? "text-purple-600 font-semibold" : ""
+                      }`
+                    }
+                    onClick={() => setOpen(false)}
+                  >
                     Profile
-                  </button>
+                  </NavLink>
                 </li>
                 <li>
-                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100">
+                  <NavLink
+                    to="/dashboard/settings"
+                    className={({ isActive }) =>
+                      `block px-4 py-2 hover:bg-gray-100 ${
+                        isActive ? "text-purple-600 font-semibold" : ""
+                      }`
+                    }
+                    onClick={() => setOpen(false)}
+                  >
                     Settings
-                  </button>
+                  </NavLink>
                 </li>
                 <li>
                   <button
-                   onClick={handleLogout}
-                   className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100">
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
+                  >
                     Logout
                   </button>
                 </li>

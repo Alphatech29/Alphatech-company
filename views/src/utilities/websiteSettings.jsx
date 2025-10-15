@@ -40,28 +40,30 @@ export const getWebsiteSettings = async () => {
 
 export const updateWebsiteSettings = async (fieldsToUpdate) => {
   try {
-    // Ensure valid input
-    if (!fieldsToUpdate || Object.keys(fieldsToUpdate).length === 0) {
+    if (
+      !fieldsToUpdate ||
+      (fieldsToUpdate instanceof FormData
+        ? ![...fieldsToUpdate.entries()].length
+        : Object.keys(fieldsToUpdate).length === 0)
+    ) {
       throw new Error("No fields provided for update.");
     }
 
+    const isFormData = fieldsToUpdate instanceof FormData;
+
     const response = await axios.put("/api/update-field", fieldsToUpdate, {
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: isFormData
+        ? {}
+        : { "Content-Type": "application/json" },
     });
 
-    const data =
-      Array.isArray(response.data) ? response.data[0] : response.data;
-
-    // Determine success response
-    const success = data?.success ?? false;
-    const message =
-      data?.message || "Website settings updated successfully!";
+    const data = Array.isArray(response.data)
+      ? response.data[0]
+      : response.data;
 
     return {
-      success,
-      message,
+      success: data?.success ?? false,
+      message: data?.message || "Website settings updated successfully!",
       data: data?.data || null,
     };
   } catch (error) {

@@ -12,7 +12,7 @@ const Settings = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const EXCLUDED_FIELDS = ["id", "created_at", "updated_at", "logo_url"];
+  const EXCLUDED_FIELDS = ["id", "created_at", "updated_at", "logo_url", "site_avatar"];
 
   // Fetch website settings
   useEffect(() => {

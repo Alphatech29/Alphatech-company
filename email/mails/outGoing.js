@@ -39,6 +39,7 @@ async function sendUserOutgoingEmail({ name, email, subject, message }) {
       subject,
       site_name: settings.site_name,
       site_url: settings.site_url,
+      site_avatar: settings.site_avatar,
       contact_email: settings.contact_email,
       contact_phone: settings.contact_phone,
       address: settings.address,

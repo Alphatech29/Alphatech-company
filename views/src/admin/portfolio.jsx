@@ -21,7 +21,7 @@ export default function PortfolioDashboard() {
     owner: "",
     start_date: "",
     amount: "",
-    image_url: null, // store File object
+    image_url: null,
     project_url: "",
     date_completed: "",
   });
