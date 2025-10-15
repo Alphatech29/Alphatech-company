@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { motion, useViewportScroll, useTransform } from "framer-motion";
 import { FaArrowRight, FaUsers, FaCheckCircle } from "react-icons/fa";
+import { useAuth } from "../utilities/authContext";
 
 const Hero = () => {
+    const { settings } = useAuth();
   const { scrollY } = useViewportScroll();
   const floatY1 = useTransform(scrollY, [0, 800], [0, -50]);
   const floatY2 = useTransform(scrollY, [0, 800], [0, 60]);
@@ -108,9 +110,7 @@ const Hero = () => {
           </motion.p>
 
           <p className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl max-w-md sm:max-w-lg md:max-w-xl mx-auto md:mx-0">
-            We craft digital experiences that elevate your business—Web Apps,
-            Mobile Apps, Cloud Solutions, and UI/UX Design. Tailored for growth,
-            efficiency, and performance.
+            {settings?.description || ""}
           </p>
 
           {/* CTA Buttons */}

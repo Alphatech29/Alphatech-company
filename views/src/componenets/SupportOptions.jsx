@@ -1,13 +1,16 @@
 import React from "react";
+import { useAuth } from "../utilities/authContext";
 
 const SupportOptions = () => {
+  const { settings } = useAuth();
+
   const options = [
     {
       id: 1,
       title: "WhatsApp",
       description: "Quick responses via WhatsApp",
       button: "CHAT NOW",
-      link: "https://wa.me/2349129079450",
+      link: settings?.whatsapp || "#",
       icon: "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg",
     },
     {
@@ -15,7 +18,7 @@ const SupportOptions = () => {
       title: "Schedule a Call",
       description: "Book a consultation session",
       button: "BOOK NOW",
-      link: "#",
+      link: "/book-a-section",
       icon: "https://cdn.vectorstock.com/i/1000v/62/98/may-2-flat-daily-calendar-icon-date-vector-17656298.avif",
     },
     {
@@ -23,7 +26,7 @@ const SupportOptions = () => {
       title: "Email Support",
       description: "Get detailed responses via email",
       button: "SEND EMAIL",
-      link: "mailto:info@alphatech.ng",
+      link: `mailto:${settings?.contact_email || ""}`,
       icon: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Mail_%28iOS%29.svg",
     },
   ];
@@ -40,9 +43,7 @@ const SupportOptions = () => {
             <img src={opt.icon} alt={opt.title} className="w-12 h-12 mb-4" />
 
             {/* Title */}
-            <h3 className="text-xl font-semibold text-gray-800">
-              {opt.title}
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-800">{opt.title}</h3>
 
             {/* Description */}
             <p className="text-gray-500 mt-2">{opt.description}</p>
@@ -50,7 +51,7 @@ const SupportOptions = () => {
             {/* Button */}
             <a
               href={opt.link}
-              className="mt-6 bg-gradient-to-r from-primary-700 via-primary-500 to-secondary-400 hover:opacity-90 transition font-semibold px-6 py-3 rounded-lg hover:bg-secondary-400 text-white "
+              className="mt-6 bg-gradient-to-r from-primary-700 via-primary-500 to-secondary-400 hover:opacity-90 transition font-semibold px-6 py-3 rounded-lg hover:bg-secondary-400 text-white"
             >
               {opt.button}
             </a>

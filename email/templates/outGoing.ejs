@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    <%= subject %> | AlphaTech Multimedia
+  </title>
+
+  <style>
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: linear-gradient(135deg, #f3f4f6 0%, #e9ecf2 100%);
+      margin: 0;
+      padding: 40px 20px;
+      color: #333;
+    }
+
+    .wrapper {
+      max-width: 640px;
+      margin: auto;
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* ------------------ HEADER ------------------ */
+    .header {
+      background: linear-gradient(135deg, #4B0082, #DAA520);
+      color: #fff;
+      text-align: center;
+      padding: 50px 25px 40px;
+      position: relative;
+    }
+
+    .header::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: #fff;
+      border-radius: 4px;
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto 15px;
+      width: 80px;
+      height: auto;
+    }
+
+    .header h1 {
+      font-size: 26px;
+      margin: 10px 0 5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .header p {
+      font-size: 14px;
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    /* ------------------ CONTENT ------------------ */
+    .content {
+      padding: 35px;
+    }
+
+    .greeting {
+      font-size: 15px;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 3px;
+    }
+
+    .message {
+      font-size: 15px;
+      color: #444;
+      line-height: 1.7;
+    }
+
+    .message p {
+      margin-bottom: 3px;
+    }
+
+    .signature {
+      margin-top: 20px;
+      color: #222;
+      font-size: 15px;
+    }
+
+    .signature strong {
+      color: #4B0082;
+    }
+
+    /* ------------------ FOOTER ------------------ */
+    .footer {
+      background: #f3f3f5;
+      text-align: center;
+      padding: 35px 20px;
+      border-top: 1px solid #e0e0e0;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    .footer-logo {
+      display: block;
+      margin: 0 auto 10px;
+      width: 70px;
+    }
+
+    .footer strong {
+      color: #4B0082;
+    }
+
+    .footer a {
+      color: #DAA520;
+      text-decoration: none;
+      margin: 0 5px;
+      font-weight: 500;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .social-links {
+      margin-top: 15px;
+    }
+
+    .social-links a {
+      display: inline-block;
+      margin: 0 6px;
+      opacity: 0.85;
+      transition: opacity 0.3s ease;
+    }
+
+    .social-links a:hover {
+      opacity: 1;
+    }
+
+    .social-links img {
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+    }
+
+    @media (max-width: 600px) {
+      .content {
+        padding: 25px;
+      }
+
+      .header h1 {
+        font-size: 20px;
+      }
+
+      .footer {
+        font-size: 12px;
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <!-- HEADER -->
+    <div class="header">
+      <h1><%= site_name %></h1>
+      <p>Official Communication.</p>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <p class="greeting">Dear <strong><%= name %></strong>,</p>
+
+      <div class="message">
+        <%- message.split(/\n\s*\n/).map(p => `<p>${p.trim().replace(/\n/g, '<br>')}</p>`).join('') %>
+      </div>
+
+      <div class="signature">
+        <p>Warm regards,</p>
+        <p>
+          <strong>AlphaTech Multimedia Team</strong><br />
+          <a href="<%= site_url %>" style="color:#DAA520; text-decoration:none;">
+            <%= site_name %>
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p>
+        © <%= new Date().getFullYear() %> <strong><%= site_name %></strong>. All Rights Reserved.<br />
+        <em><%= site_name %> — Let’s turn your imagination into reality.</em>
+      </p>
+
+      <p style="margin-top: 8px;">
+        <a href="<%= site_url %>">Visit Website</a> |
+        <a href="<%= site_url %>/contact-us">Contact Support</a> |
+        <a href="<%= site_url %>/privacy-policy">Privacy Policy</a> |
+        <a href="<%= site_url %>/terms-of-service">Terms</a>
+      </p>
+
+      <p style="margin-top: 10px; font-size: 12px; color: #777;">
+        Head Office: <%= address %><br />
+        Phone: <%= contact_phone %> |
+        Email:
+        <a href="mailto:<%= contact_email %>" style="color:#DAA520; text-decoration:none;"><%= contact_email %></a>
+      </p>
+
+      <div class="social-links">
+        <p class="social-icons">
+          <a href="<%= facebook %>"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"></a>
+          <a href="<%= twitter %>"><img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter"></a>
+          <a href="<%= instagram %>"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"></a>
+          <a href="<%= linkedin %>"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn"></a>
+          <a href="<%= tiktok %>"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046123.png" alt="TikTok"></a>
+        </p>
+      </div>
+
+      <p style="margin-top: 14px; font-size: 11px; color: #aaa;">
+        You’re receiving this email because you’re a valued contact of <%= site_name %>.<br />
+        If you no longer wish to receive our messages,
+        <a href="<%= unsubscribe_link %>" style="color:#DAA520; text-decoration:none;">unsubscribe here</a>.
+      </p>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -4,10 +4,14 @@ import Dashboard from "../admin/dashboard";
 import Portfolio from "../admin/portfolio";
 import Settings from "../admin/settings";
 import Testimonies from "../admin/testimonies";
+import Faqs from "../admin/faqs";
+import NotFound from "../admin/notFound";
+import ContactDashboard from "../admin/contact";
+import CreateContact from "../admin/createContact";
 //import Home from "../general/shop/index";
 
 
-export default function ShopRoute() {
+export default function AdminRoute() {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />}>
@@ -15,6 +19,10 @@ export default function ShopRoute() {
         <Route path="portfolio" element={<Portfolio/>}></Route>
          <Route path="settings" element={<Settings/>}></Route>
          <Route path="testimonies" element={<Testimonies/>}></Route>
+         <Route path="faqs" element={<Faqs/>}></Route>
+         <Route path="message" element={<ContactDashboard/>}></Route>
+         <Route path="message/create" element={<CreateContact/>}></Route>
+         <Route path="*" element={<NotFound/>}></Route>
       </Route>
     </Routes>
   );

@@ -5,7 +5,9 @@ import {
   FaTimes,
   FaCalendarAlt ,
   FaBuromobelexperte,
-FaCommentDots
+  FaQuestionCircle,
+FaCommentDots,
+FaQuoteRight
 } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -16,6 +18,8 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     { name: "Dashboard", path: "/dashboard", icon: <FaTachometerAlt /> },
     { name: "Appointment", path: "/dashboard/appointment", icon: <FaCalendarAlt /> },
     { name: "Portfolio", path: "/dashboard/portfolio", icon: <FaBuromobelexperte  /> },
+    { name: "Faqs", path: "/dashboard/faqs", icon: <FaQuestionCircle /> },
+    { name: "Messages", path: "/dashboard/message", icon: <FaQuoteRight /> },
     { name: "Testimonies", path: "/dashboard/testimonies", icon: <FaCommentDots     /> },
     { name: "Settings", path: "/dashboard/settings", icon: <FaCog /> },
   ];
