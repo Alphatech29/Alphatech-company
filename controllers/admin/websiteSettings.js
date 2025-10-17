@@ -1,7 +1,10 @@
 const asyncHandler = require("../../middleWare/asyncHandler");
-const { getWebsiteSettings, updateWebsiteSettings } = require("../../utilities/general");
+const {
+  getWebsiteSettings,
+  updateWebsiteSettings,
+  addWebsiteAvatar,
+} = require("../../utilities/general");
 
-// Fetch website settings
 const fetchWebsiteSettings = async (req, res) => {
   try {
     const settings = await getWebsiteSettings();
@@ -27,49 +30,16 @@ const fetchWebsiteSettings = async (req, res) => {
   }
 };
 
-
-// Handles both JSON and multipart/form-data (FormData) requests
 const updateWebsiteSettingsController = asyncHandler(async (req, res) => {
   console.log("Incoming request to update website settings");
 
   try {
     let fieldsToUpdate = {};
 
-    // Parse JSON body if present
-    if (req.body.settings) {
-      try {
-        fieldsToUpdate = JSON.parse(req.body.settings);
-      } catch (err) {
-        console.error("Invalid JSON format in settings field:", err.message);
-        return res.status(400).json({
-          success: false,
-          message: "Invalid JSON format in settings field.",
-          error: err.message,
-        });
-      }
-    } else {
-      // Direct JSON body
-      fieldsToUpdate = req.body;
+    if (req.body && Object.keys(req.body).length > 0) {
+      fieldsToUpdate = { ...req.body };
     }
 
-    // Handle uploaded files (from multer)
-    if (req.files && Object.keys(req.files).length > 0) {
-      console.log("Uploaded files:", Object.keys(req.files));
-
-      if (req.files.site_avatar && req.files.site_avatar[0]) {
-        const file = req.files.site_avatar[0];
-        fieldsToUpdate.site_avatar = `/uploads/${file.filename}`;
-      }
-
-      if (req.files.favicon && req.files.favicon[0]) {
-        const file = req.files.favicon[0];
-        fieldsToUpdate.favicon = `/uploads/${file.filename}`;
-      }
-    }
-
-    console.log("Fields to update:", fieldsToUpdate);
-
-    // Validate fields
     if (!fieldsToUpdate || Object.keys(fieldsToUpdate).length === 0) {
       return res.status(400).json({
         success: false,
@@ -77,11 +47,8 @@ const updateWebsiteSettingsController = asyncHandler(async (req, res) => {
       });
     }
 
-    // Update in database
     const result = await updateWebsiteSettings(fieldsToUpdate);
-    console.log("Database update result:", result);
 
-    // Send success response
     return res.status(200).json({
       success: true,
       message: result?.message || "Website settings updated successfully.",
@@ -99,7 +66,37 @@ const updateWebsiteSettingsController = asyncHandler(async (req, res) => {
   }
 });
 
+const addWebsiteAvatarController = asyncHandler(async (req, res) => {
+  console.log("Incoming request to add website avatar");
+
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).json({
+      success: false,
+      message: "No avatar file uploaded.",
+    });
+  }
+
+  try {
+    const avatarPath = `/uploads/${req.files[0].filename}`;
+    const result = await addWebsiteAvatar(avatarPath);
+
+    return res.status(result.success ? 201 : 500).json({
+      success: result.success, // <--- this must be TRUE if avatar was saved
+      message: result.message || "Website avatar added successfully",
+      data: result.success ? { avatar: avatarPath, ...result.data } : null,
+    });
+  } catch (error) {
+    console.error("Exception in addWebsiteAvatarController:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Server error adding website avatar.",
+      data: null,
+    });
+  }
+});
+
 module.exports = {
   fetchWebsiteSettings,
   updateWebsiteSettingsController,
+  addWebsiteAvatarController,
 };

@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../utilities/authContext";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+    const { settings } = useAuth();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -32,7 +34,7 @@ export default function Header() {
         <div className="text-2xl font-bold text-primary-200">
           <NavLink to="/">
             <img
-              src="/image/favicon.png"
+              src={settings?.avatar || "/image/favicon.png"}
               alt="Logo"
               className="object-contain w-36"
             />

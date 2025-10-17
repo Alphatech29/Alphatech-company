@@ -1,19 +1,33 @@
 const pool = require("../model/db");
 
 // Add a new contact form entry
-async function addContactForm(name, email, subject, message) {
+async function addContactForm({
+  receiver_name,
+  email,
+  subject,
+  message,
+  sender_position,
+  sender_name,
+}) {
   try {
-    const [result] = await pool.query(
-      `INSERT INTO contact_form (name, email, subject, message) VALUES (?, ?, ?, ?)`,
-      [name, email, subject, message]
-    );
+    const query = `
+      INSERT INTO contact_form
+        (receiver_name, sender_name, sender_position, email, subject, message)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    const values = [receiver_name, sender_name, sender_position, email, subject, message];
+
+    const [result] = await pool.query(query, values);
 
     return {
       success: true,
       message: "Contact form submitted successfully",
       data: {
         id: result.insertId,
-        name,
+        receiver_name,
+        sender_name,
+        sender_position,
         email,
         subject,
         message,
@@ -33,7 +47,17 @@ async function addContactForm(name, email, subject, message) {
 async function getAllContactForms() {
   try {
     const [rows] = await pool.query(
-      `SELECT id, name, email, subject, message, created_at FROM contact_form ORDER BY created_at DESC`
+      `SELECT 
+        id, 
+        receiver_name,
+        email, 
+        subject, 
+        message, 
+        sender_position, 
+        sender_name,
+        created_at
+       FROM contact_form 
+       ORDER BY created_at DESC`
     );
 
     return {
@@ -54,10 +78,9 @@ async function getAllContactForms() {
 // Delete a contact form entry by ID
 async function deleteContactForm(id) {
   try {
-    const [result] = await pool.query(
-      `DELETE FROM contact_form WHERE id = ?`,
-      [id]
-    );
+    const [result] = await pool.query(`DELETE FROM contact_form WHERE id = ?`, [
+      id,
+    ]);
 
     if (result.affectedRows === 0) {
       return {

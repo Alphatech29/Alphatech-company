@@ -1,0 +1,2 @@
+{"level":"error","message":"Failed to setup transporter: Error: getaddrinfo ENOTFOUND smtp.gmail.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:120:26)","timestamp":"2025-10-17 14:22:34"}
+{"level":"error","message":"Failed to setup transporter: Error: getaddrinfo ENOTFOUND smtp.gmail.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:120:26)","timestamp":"2025-10-17 14:22:35"}

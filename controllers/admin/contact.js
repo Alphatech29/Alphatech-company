@@ -3,7 +3,7 @@ const sendAdminContactNotification = require("../../email/mails/contact");
 
 const createAdminContactForm = async (req, res) => {
   try {
-    const { name, email, subject, message } = req.body;
+    const { name, email, subject, message, } = req.body;
 
     if (!name || !email || !message) {
       return res.status(400).json({

@@ -65,7 +65,7 @@ const ContactDashboard = () => {
     fetchMessages();
   }, []);
 
-  // -------------------- Delete Message (with SweetAlert) --------------------
+  // -------------------- Delete Message --------------------
   const handleDelete = async (id) => {
     const confirmDelete = await SweetAlert.confirm(
       "Are you sure?",
@@ -94,7 +94,6 @@ const ContactDashboard = () => {
         {/* Header Section */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-extrabold text-gray-900">Contact Messages</h1>
-
           <NavLink
             to="/dashboard/message/create"
             className="px-5 py-2.5 text-sm rounded-xl bg-gradient-to-r from-primary-200 to-primary-700 text-white font-medium shadow-md hover:shadow-lg hover:scale-105 transition"
@@ -120,7 +119,7 @@ const ContactDashboard = () => {
               >
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-medium text-gray-800 truncate">
-                    {formatName(msg.name)}
+                    {formatName(msg.receiver_name)}
                   </h3>
                 </div>
 
@@ -129,7 +128,11 @@ const ContactDashboard = () => {
                 </p>
 
                 <p className="text-sm text-gray-500 mb-1">
-                  <strong>Email:</strong> {formatEmail(msg.email)}
+                  <strong>Receiver Email:</strong> {formatEmail(msg.email)}
+                </p>
+
+                <p className="text-sm text-gray-500 mb-1">
+                  <strong>Sender:</strong> {formatName(msg.sender_name)} ({msg.sender_position})
                 </p>
 
                 <p className="text-gray-600 text-sm mt-3 line-clamp-3">{msg.message}</p>
@@ -185,12 +188,20 @@ const ContactDashboard = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-2 mb-4 text-sm text-gray-600">
               <p>
-                <span className="font-medium text-gray-700">Name:</span>{" "}
-                {formatName(selectedMessage.name)}
+                <span className="font-medium text-gray-700">Receiver:</span>{" "}
+                {formatName(selectedMessage.receiver_name)}
               </p>
               <p>
-                <span className="font-medium text-gray-700">Email:</span>{" "}
+                <span className="font-medium text-gray-700">Receiver Email:</span>{" "}
                 {formatEmail(selectedMessage.email)}
+              </p>
+              <p>
+                <span className="font-medium text-gray-700">Sender:</span>{" "}
+                {formatName(selectedMessage.sender_name)}
+              </p>
+              <p>
+                <span className="font-medium text-gray-700">Position:</span>{" "}
+                {selectedMessage.sender_position}
               </p>
             </div>
 

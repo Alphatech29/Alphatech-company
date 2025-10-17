@@ -60,11 +60,14 @@ export const submitContactForm = async ({ name, email, subject, message }) => {
 };
 
 // -------------------- Submit a new admin contact form entry --------------------
-export const submitAdminContactForm = async ({ name, email, subject, message }) => {
+export const submitAdminContactForm = async (formData) => {
   try {
+    // Log the payload before sending
+    console.log("Submitting full contact form payload:", formData);
+
     const response = await axios.post(
       "/api/send-message",
-      { name, email, subject, message },
+      formData, // send all fields dynamically
       { headers: { "Content-Type": "application/json" } }
     );
 
@@ -76,7 +79,10 @@ export const submitAdminContactForm = async ({ name, email, subject, message }) 
       data: payload?.data || null,
     };
   } catch (error) {
-    console.error("Submitting contact form failed:", error.response?.data || error.message);
+    console.error(
+      "Submitting contact form failed:",
+      error.response?.data || error.message
+    );
 
     return {
       success: false,
@@ -88,6 +94,7 @@ export const submitAdminContactForm = async ({ name, email, subject, message }) 
     };
   }
 };
+
 
 // -------------------- Delete a contact form entry --------------------
 export const deleteContactForm = async (id) => {

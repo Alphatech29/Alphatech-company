@@ -22,7 +22,7 @@ export default function Footer() {
           <h2 className="text-2xl font-bold text-primary-200">
             <a href="/">
               <img
-                src="/image/favicon.png"
+                src={settings?.avatar || "/image/favicon.png"}
                 alt="footer logo"
                 className="object-contain w-36"
               />

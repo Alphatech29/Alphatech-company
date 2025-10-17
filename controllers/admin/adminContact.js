@@ -4,30 +4,41 @@ const sendUserOutgoingEmail = require("../../email/mails/outGoing");
 // Controller to handle adding a new contact form submission
 const createContactForm = async (req, res) => {
   try {
-    const { name, email, subject, message } = req.body;
 
-    if (!name || !email || !message) {
+    const { receiver_name, email, subject, message, sender_position, sender_name } = req.body;
+
+    if (!receiver_name || !email || !message || !sender_position || !sender_name) {
+      console.log("Validation failed: Missing required fields");
       return res.status(400).json({
         success: false,
-        message: "Name, email, and message are required",
+        message: "All fields are required",
         data: null,
       });
     }
 
-    const response = await addContactForm(name, email, subject, message);
+    const response = await addContactForm({
+      receiver_name,
+      email,
+      subject,
+      message,
+      sender_position,
+      sender_name,
+    });
+
 
     if (response.success) {
       try {
         await sendUserOutgoingEmail({
-          name,
+          receiver_name,
+          sender_name,
+          sender_position,
           email,
           subject,
           message,
         });
-
-        console.log(" Contact form email sent successfully to user.");
+        console.log("Contact form email sent successfully to user.");
       } catch (userEmailError) {
-        console.error(" Failed to send email to user:", userEmailError);
+        console.error("Failed to send email to user:", userEmailError);
       }
     }
 
@@ -41,6 +52,7 @@ const createContactForm = async (req, res) => {
     });
   }
 };
+
 
 // Controller to handle fetching all contact form submissions
 const fetchAllContactForms = async (req, res) => {

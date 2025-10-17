@@ -4,9 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>
-    <%= subject %> | AlphaTech Multimedia
-  </title>
+  <title>Invoice | AlphaTech Multimedia</title>
 
   <style>
     body {
@@ -18,7 +16,7 @@
     }
 
     .wrapper {
-      max-width: 640px;
+      max-width: 800px;
       margin: auto;
       background: #fff;
       border-radius: 20px;
@@ -27,7 +25,7 @@
       border: 1px solid rgba(0, 0, 0, 0.05);
     }
 
-    /* ------------------ HEADER ------------------ */
+    /* HEADER */
     .header {
       background: linear-gradient(135deg, #4B0082, #DAA520);
       color: #fff;
@@ -68,39 +66,62 @@
       opacity: 0.9;
     }
 
-    /* ------------------ CONTENT ------------------ */
-    .content {
+    /* INVOICE INFO */
+    .invoice-info {
       padding: 35px;
     }
 
-    .greeting {
-      font-size: 15px;
-      font-weight: 600;
-      color: #222;
-      margin-bottom: 3px;
-    }
-
-    .message {
-      font-size: 15px;
-      color: #444;
-      line-height: 1.7;
-    }
-
-    .message p {
-      margin-bottom: 3px;
-    }
-
-    .signature {
-      margin-top: 20px;
-      color: #222;
-      font-size: 15px;
-    }
-
-    .signature strong {
+    .invoice-info h2 {
+      margin-top: 0;
+      font-size: 20px;
       color: #4B0082;
     }
 
-    /* ------------------ FOOTER ------------------ */
+    .invoice-details,
+    .billing-info {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+
+    .invoice-details div,
+    .billing-info div {
+      width: 48%;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 25px;
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    th {
+      background-color: #f3f3f5;
+      font-weight: 600;
+      color: #4B0082;
+    }
+
+    tfoot td {
+      font-weight: 700;
+      color: #222;
+      border-top: 2px solid #4B0082;
+    }
+
+    .notes {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    /* FOOTER */
     .footer {
       background: #f3f3f5;
       text-align: center;
@@ -108,63 +129,13 @@
       border-top: 1px solid #e0e0e0;
       font-size: 13px;
       color: #555;
-      line-height: 1.7;
-    }
-
-    .footer-logo {
-      display: block;
-      margin: 0 auto 10px;
-      width: 70px;
-    }
-
-    .footer strong {
-      color: #4B0082;
-    }
-
-    .footer a {
-      color: #DAA520;
-      text-decoration: none;
-      margin: 0 5px;
-      font-weight: 500;
-    }
-
-    .footer a:hover {
-      text-decoration: underline;
-    }
-
-    .social-links {
-      margin-top: 15px;
-    }
-
-    .social-links a {
-      display: inline-block;
-      margin: 0 6px;
-      opacity: 0.85;
-      transition: opacity 0.3s ease;
-    }
-
-    .social-links a:hover {
-      opacity: 1;
-    }
-
-    .social-links img {
-      width: 20px;
-      height: 20px;
-      vertical-align: middle;
     }
 
     @media (max-width: 600px) {
-      .content {
-        padding: 25px;
-      }
-
-      .header h1 {
-        font-size: 20px;
-      }
-
-      .footer {
-        font-size: 12px;
-        padding: 25px;
+      .invoice-details div,
+      .billing-info div {
+        width: 100%;
+        margin-bottom: 15px;
       }
     }
   </style>
@@ -174,72 +145,75 @@
   <div class="wrapper">
     <!-- HEADER -->
     <div class="header">
-      <img
-        src="<%= site_url %><%= site_avatar %>"
-        alt="AlphaTech Logo"
-        class="logo"
-      />
-      <p>Official Communication.</p>
+      <img src="<%= site_url %><%= avatar %>" alt="AlphaTech Logo" class="logo" />
+      <h1>Invoice</h1>
+      <p>Official Billing Document</p>
     </div>
 
-    <!-- CONTENT -->
-    <div class="content">
-      <p class="greeting">Dear <strong><%= name %></strong>,</p>
-
-      <div class="message">
-        <%- message
-          .split(/\n\s*\n/)
-          .map(p => `<p>${p.trim().replace(/\n/g, '<br>')}</p>`)
-          .join('') %>
+    <!-- INVOICE CONTENT -->
+    <div class="invoice-info">
+      <div class="invoice-details">
+        <div>
+          <p><strong>Invoice #: </strong><%= invoice_number %></p>
+          <p><strong>Date: </strong><%= invoice_date %></p>
+          <p><strong>Due Date: </strong><%= due_date %></p>
+        </div>
+        <div>
+          <p><strong>Bill To:</strong></p>
+          <p><%= client_name %></p>
+          <p><%= client_address %></p>
+          <p><%= client_email %></p>
+        </div>
       </div>
 
-      <div class="signature">
-        <p>Warm regards,</p>
-        <p>
-          <strong>AlphaTech Multimedia Team</strong><br />
-          <a href="<%= site_url %>" style="color:#DAA520; text-decoration:none;">
-            <%= site_name %>
-          </a>
-        </p>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach((item, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= item.description %></td>
+            <td><%= item.quantity %></td>
+            <td><%= item.unit_price %></td>
+            <td><%= item.total %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4">Subtotal</td>
+            <td><%= subtotal %></td>
+          </tr>
+          <tr>
+            <td colspan="4">Tax (<%= tax_rate %>%)</td>
+            <td><%= tax %></td>
+          </tr>
+          <tr>
+            <td colspan="4">Total</td>
+            <td><%= total %></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="notes">
+        <p><strong>Notes:</strong></p>
+        <p><%= notes %></p>
       </div>
     </div>
 
     <!-- FOOTER -->
     <div class="footer">
-      <p>
-        © <%= new Date().getFullYear() %> <strong><%= site_name %></strong>. All Rights Reserved.<br />
-        <em><%= site_name %> — Let’s turn your imagination into reality.</em>
-      </p>
-
-      <p style="margin-top: 8px;">
-        <a href="<%= site_url %>">Visit Website</a> |
-        <a href="<%= site_url %>/contact-us">Contact Support</a> |
-        <a href="<%= site_url %>/privacy-policy">Privacy Policy</a> |
-        <a href="<%= site_url %>/terms-of-service">Terms</a>
-      </p>
-
-      <p style="margin-top: 10px; font-size: 12px; color: #777;">
-        Head Office: <%= address %><br />
-        Phone: <%= contact_phone %> |
-        Email:
-        <a href="mailto:<%= contact_email %>" style="color:#DAA520; text-decoration:none;"><%= contact_email %></a>
-      </p>
-
-      <div class="social-links">
-        <p class="social-icons">
-          <a href="<%= facebook %>"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"></a>
-          <a href="<%= twitter %>"><img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter"></a>
-          <a href="<%= instagram %>"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"></a>
-          <a href="<%= linkedin %>"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn"></a>
-          <a href="<%= tiktok %>"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046123.png" alt="TikTok"></a>
-        </p>
-      </div>
-
-      <p style="margin-top: 14px; font-size: 11px; color: #aaa;">
-        You’re receiving this email because you’re a valued contact of <%= site_name %>.<br />
-        If you no longer wish to receive our messages,
-        <a href="<%= unsubscribe_link %>" style="color:#DAA520; text-decoration:none;">unsubscribe here</a>.
-      </p>
+      <p>© <%= new Date().getFullYear() %> <strong><%= site_name %></strong>. All Rights Reserved.</p>
+      <p>Phone: <%= contact_phone %> | Email: <a href="mailto:<%= contact_email %>"><%= contact_email %></a></p>
+      <p>Head Office: <%= address %></p>
     </div>
   </div>
 </body>

@@ -1,208 +1,147 @@
-import React, { useEffect, useState } from "react";
-import { Spinner, Button } from "flowbite-react";
+import React, { useState, useEffect } from "react";
+import { HiPlus } from "react-icons/hi";
 import SweetAlert from "../utilities/sweetAlert";
-import {
-  getWebsiteSettings,
-  updateWebsiteSettings,
-} from "../utilities/websiteSettings";
+import { getWebsiteSettings } from "../utilities/websiteSettings";
 
-const Profile = () => {
-  const [settings, setSettings] = useState({
-    site_avatar: "",
-  });
-  const [originalSettings, setOriginalSettings] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+export default function WebsiteProfile() {
+  const [settings, setSettings] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // ✅ Fetch settings on mount
+
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchSettings = async () => {
       try {
-        const res = await getWebsiteSettings();
-        if (res?.success && res.data?.length > 0) {
-          const data = res.data[0];
-          const profileData = {
-            site_avatar: data.site_avatar || "",
-          };
-          setSettings(profileData);
-          setOriginalSettings(profileData);
-        } else {
-          await SweetAlert.alert("Error", "No profile data found.", "warning");
-        }
+        const response = await getWebsiteSettings();
+        setSettings(response.data);
       } catch (error) {
-        console.error("Error fetching profile data:", error);
-        await SweetAlert.alert("Error", "Failed to load profile data.", "error");
-      } finally {
-        setLoading(false);
+        console.error("Failed to fetch website settings:", error);
+        await SweetAlert.alert(
+          "Error",
+          "Failed to fetch website settings.",
+          "error"
+        );
       }
     };
-
-    fetchProfile();
-
-    return () => {
-      Object.values(settings).forEach((value) => {
-        if (value instanceof File) URL.revokeObjectURL(value);
-      });
-    };
+    fetchSettings();
   }, []);
 
-  // ✅ Handle avatar file selection (no auto-save)
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const validTypes = ["image/png", "image/jpeg", "image/jpg"];
-    if (!validTypes.includes(file.type)) {
-      await SweetAlert.alert(
-        "Invalid File",
-        "Only PNG, JPEG, or JPG files are allowed.",
-        "warning"
-      );
-      return;
-    }
-
-    // Just update the preview and local state, no upload yet
-    setSettings((prev) => ({ ...prev, site_avatar: file }));
-    await SweetAlert.alert(
-      "File Selected",
-      "Your avatar has been updated locally. Click 'Save Changes' to upload.",
-      "info"
-    );
-  };
-
-  // ✅ Detect changed fields
-  const getChangedFields = () => {
-    const changed = {};
-    for (const key in settings) {
-      if (settings[key] !== originalSettings[key]) {
-        changed[key] = settings[key];
-      }
-    }
-    return changed;
-  };
-
-  // ✅ Save profile changes manually
   const handleSave = async () => {
-    const changedFields = getChangedFields();
-
-    if (Object.keys(changedFields).length === 0) {
-      await SweetAlert.alert("No Changes", "No profile updates detected.", "info");
+    if (!selectedFile) {
+      await SweetAlert.alert("Error", "No avatar selected.", "error");
       return;
     }
 
-    const confirm = await SweetAlert.confirm(
-      "Confirm Update",
-      "Do you want to save these profile changes?"
-    );
-    if (!confirm) return;
+    setLoading(true);
 
-    setSaving(true);
     try {
       const formData = new FormData();
-      Object.entries(changedFields).forEach(([key, value]) => {
-        formData.append(key, value);
+      formData.append("avatar", selectedFile);
+
+      const response = await fetch("/api/settings-profile", {
+        method: "PUT",
+        body: formData,
       });
 
-      const response = await updateWebsiteSettings(formData);
+      const result = await response.json();
 
-      if (response?.success) {
-        await SweetAlert.alert("Success", "Profile updated successfully!", "success");
-        setOriginalSettings(settings);
+      if (result.success) {
+
+        setSettings((prev) =>
+          prev.map((item) => ({
+            ...item,
+            avatar: result.data?.avatar || URL.createObjectURL(selectedFile),
+          }))
+        );
+
+        const alertType = result.success ? "success" : "error";
+
+        await SweetAlert.alert(
+          result.success ? "Success" : "Error",
+          result.message || "Avatar updated successfully.",
+          alertType
+        );
+
+        setSelectedFile(null);
       } else {
-        await SweetAlert.alert("Error", "Unable to update profile.", "error");
+        await SweetAlert.alert(
+          "Error",
+          result.message || "Failed to update avatar.",
+          "error"
+        );
       }
     } catch (error) {
-      console.error("Error saving profile:", error);
-      await SweetAlert.alert("Error", "An error occurred while saving.", "error");
+      console.error(error);
+      await SweetAlert.alert(
+        "Error",
+        "Something went wrong while updating the avatar.",
+        "error"
+      );
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
-  };
-
-  const getPreviewUrl = (value) => {
-    if (value instanceof File) return URL.createObjectURL(value);
-    return value;
   };
 
   return (
-    <div className="min-h-screen py-8">
-      <div>
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-start">
-          Profile Settings
-        </h2>
+    <div className="min-h-screen py-10">
+      <div className=" bg-white shadow-xl rounded-3xl p-8 sm:p-12">
+        {/* Render settings */}
+        {Array.isArray(settings) &&
+          settings.map((item, index) => (
+            <div
+              key={index}
+              className="flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-10"
+            >
+              {/* Avatar */}
+              <div className="relative w-32 h-32">
+                {item.avatar ? (
+                  <img
+                    src={
+                      typeof item.avatar === "string"
+                        ? item.avatar
+                        : URL.createObjectURL(item.avatar)
+                    }
+                    alt="Avatar"
+                    className="w-32 h-32 rounded-full object-cover shadow-lg border-4 border-purple-400"
+                  />
+                ) : (
+                  <div className="w-32 h-32 rounded-full bg-purple-100 flex items-center justify-center text-purple-500 text-4xl font-bold shadow-inner">
+                    {item.site_name?.charAt(0)}
+                  </div>
+                )}
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm">
-          {loading ? (
-            <div className="flex justify-center items-center h-40">
-              <Spinner aria-label="Loading profile..." size="xl" />
-            </div>
-          ) : (
-            <>
-              {/* Avatar Upload */}
-              <div className="flex flex-col items-center mb-10">
-                <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-gray-200 shadow-sm">
-                  {settings.site_avatar ? (
-                    <img
-                      key={settings.site_avatar?.name || settings.site_avatar}
-                      src={getPreviewUrl(settings.site_avatar)}
-                      alt="Avatar"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center w-full h-full bg-gray-100 text-gray-400 text-sm">
-                      No Avatar
-                    </div>
-                  )}
-                  <label
-                    htmlFor="avatar-upload"
-                    className="absolute bottom-0 right-0 bg-gray-800 text-white p-1 rounded-full cursor-pointer hover:bg-gray-700"
-                    title="Upload Avatar"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-4 h-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5v14" />
-                    </svg>
-                  </label>
+                {/* Upload Button */}
+                <label className="absolute bottom-0 right-0 bg-purple-600 w-10 h-10 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-110 transition-transform duration-300">
+                  <HiPlus className="text-white text-xl" />
                   <input
-                    id="avatar-upload"
                     type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
+                    accept="image/png, image/jpeg"
+                    onChange={(e) => setSelectedFile(e.target.files[0])}
                     className="hidden"
                   />
-                </div>
-                <p className="mt-3 text-gray-500 text-sm">Upload your avatar</p>
+                </label>
               </div>
 
-              {/* Save Button */}
-              <div className="pt-8 flex justify-end items-end">
-                <Button
-                  className="bg-purple-700 hover:bg-purple-600"
-                  onClick={handleSave}
-                  disabled={saving}
-                >
-                  {saving ? (
-                    <div className="flex items-center gap-2">
-                      <Spinner size="sm" />
-                      <span>Saving...</span>
-                    </div>
-                  ) : (
-                    "Save Changes"
-                  )}
-                </Button>
+              {/* Site Name */}
+              <div className="text-center sm:text-left w-full">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-wide">
+                  {item.site_name}
+                </h1>
               </div>
-            </>
-          )}
+            </div>
+          ))}
+
+        {/* Save button at bottom */}
+        <div className="text-center mt-6">
+          <button
+            onClick={handleSave}
+            disabled={loading || !selectedFile}
+            className="bg-gradient-to-r from-primary-200 to-primary-700 text-white px-6 py-3 rounded-full shadow-lg  transition-colors duration-300"
+          >
+            {loading ? "Saving..." : "Save"}
+          </button>
         </div>
       </div>
     </div>
   );
-};
-
-export default Profile;
+}

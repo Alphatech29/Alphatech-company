@@ -6,60 +6,103 @@ import {
   FaRegCommentDots,
   FaPaperPlane,
   FaArrowLeft,
+  FaBriefcase,
 } from "react-icons/fa";
 import { submitAdminContactForm } from "../utilities/contactUs";
 import SweetAlert from "../utilities/sweetAlert";
 
 const CreateContact = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    receiver_name: "",
     email: "",
+    sender_name: "",
+    sender_position: "",
     subject: "",
     message: "",
   });
 
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ // Handle form submission
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!formData.name || !formData.email || !formData.message) {
-      await SweetAlert.alert("Missing Fields", "Please fill all required fields.", "error");
-      return;
-    }
+  // Trim all values
+  const trimmedData = Object.fromEntries(
+    Object.entries(formData).map(([key, value]) => [key, value.trim()])
+  );
 
-    setLoading(true);
+  // Required fields
+  const requiredFields = [
+    "sender_name",
+    "sender_position",
+    "receiver_name",
+    "email",
+    "message",
+  ];
 
-    try {
-      const response = await submitAdminContactForm(formData);
+  // Check for empty fields
+  const newErrors = {};
+  requiredFields.forEach((field) => {
+    if (!trimmedData[field]) newErrors[field] = "This field is required";
+  });
 
-      if (response.success) {
-        await SweetAlert.alert("Success", "Message sent successfully!", "success");
-        setFormData({ name: "", email: "", subject: "", message: "" });
-      } else {
-        await SweetAlert.alert(
-          "Error",
-          response.message || "Failed to send message. Try again.",
-          "error"
-        );
-      }
-    } catch (error) {
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    await SweetAlert.alert(
+      "Missing Fields",
+      "Please fill all required fields before submitting.",
+      "error"
+    );
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    // Log the data before sending
+    console.log("Data being sent to backend:", trimmedData);
+
+    const response = await submitAdminContactForm(trimmedData);
+
+    if (response?.success) {
+      await SweetAlert.alert("Success", "Message sent successfully!", "success");
+      setFormData({
+        receiver_name: "",
+        email: "",
+        sender_name: "",
+        sender_position: "",
+        subject: "",
+        message: "",
+      });
+      setErrors({});
+    } else {
       await SweetAlert.alert(
         "Error",
-        error.message || "Something went wrong. Please try again.",
+        response?.message || "Failed to send message. Try again.",
         "error"
       );
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    await SweetAlert.alert(
+      "Error",
+      error?.message || "Something went wrong. Please try again.",
+      "error"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen flex flex-col items-start justify-start py-10">
@@ -75,36 +118,79 @@ const CreateContact = () => {
       </div>
 
       {/* Contact Form */}
-      <div className="w-full bg-white/10 border border-primary-700/20 shadow-2xl rounded-3xl p-8 text-gray-600">
+      <div className="w-full bg-white border border-primary-700/20 shadow-2xl rounded-3xl p-8 text-gray-700">
         <div className="flex items-center justify-center w-full mb-8">
           <h1 className="text-2xl font-extrabold text-gray-900">Message</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-            {/* Full Name */}
+            {/* Sender Name */}
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Full Name *
-              </label>
+              <label className="block text-sm font-medium mb-1">Sender Name *</label>
               <div className="relative">
                 <FaUser className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
                 <input
                   type="text"
-                  name="name"
-                  value={formData.name}
+                  name="sender_name"
+                  value={formData.sender_name}
                   onChange={handleChange}
-                  placeholder="Enter your full name"
-                  className="w-full pl-10 pr-4 py-2.5 bg-transparent border border-gray-600/35 rounded-xl focus:ring-1 focus:ring-purple-700/25 focus:outline-none text-gray-700 text-sm placeholder-gray-400"
+                  placeholder="Enter sender name"
+                  className={`w-full pl-10 pr-4 py-2.5 border rounded-xl focus:ring-1 focus:outline-none text-gray-700 text-sm placeholder-gray-400 ${
+                    errors.sender_name ? "border-red-500" : "border-gray-600/35"
+                  }`}
                 />
               </div>
+              {errors.sender_name && (
+                <p className="text-red-500 text-xs mt-1">{errors.sender_name}</p>
+              )}
+            </div>
+
+            {/* Sender Position */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Sender Position *</label>
+              <div className="relative">
+                <FaBriefcase className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  name="sender_position"
+                  value={formData.sender_position}
+                  onChange={handleChange}
+                  placeholder="Your position or title"
+                  className={`w-full pl-10 pr-4 py-2.5 border rounded-xl focus:ring-1 focus:outline-none text-gray-700 text-sm placeholder-gray-400 ${
+                    errors.sender_position ? "border-red-500" : "border-gray-600/35"
+                  }`}
+                />
+              </div>
+              {errors.sender_position && (
+                <p className="text-red-500 text-xs mt-1">{errors.sender_position}</p>
+              )}
+            </div>
+
+            {/* Receiver Name */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Receiver Name *</label>
+              <div className="relative">
+                <FaUser className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  name="receiver_name"
+                  value={formData.receiver_name}
+                  onChange={handleChange}
+                  placeholder="Enter receiver name"
+                  className={`w-full pl-10 pr-4 py-2.5 border rounded-xl focus:ring-1 focus:outline-none text-gray-700 text-sm placeholder-gray-400 ${
+                    errors.receiver_name ? "border-red-500" : "border-gray-600/35"
+                  }`}
+                />
+              </div>
+              {errors.receiver_name && (
+                <p className="text-red-500 text-xs mt-1">{errors.receiver_name}</p>
+              )}
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Email Address *
-              </label>
+              <label className="block text-sm font-medium mb-1">Receiver Email Address *</label>
               <div className="relative">
                 <FaEnvelope className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
                 <input
@@ -112,10 +198,15 @@ const CreateContact = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="Enter your email"
-                  className="w-full pl-10 pr-4 py-2.5 bg-transparent border border-gray-600/35 rounded-xl focus:ring-1 focus:ring-purple-700/25 focus:outline-none text-gray-700 text-sm placeholder-gray-400"
+                  placeholder="Enter receiver email"
+                  className={`w-full pl-10 pr-4 py-2.5 border rounded-xl focus:ring-1 focus:outline-none text-gray-700 text-sm placeholder-gray-400 ${
+                    errors.email ? "border-red-500" : "border-gray-600/35"
+                  }`}
                 />
               </div>
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+              )}
             </div>
           </div>
 
@@ -130,7 +221,7 @@ const CreateContact = () => {
                 value={formData.subject}
                 onChange={handleChange}
                 placeholder="Subject of your message"
-                className="w-full pl-10 pr-4 py-2.5 bg-transparent border border-gray-600/35 rounded-xl focus:ring-1 focus:ring-purple-700/25 focus:outline-none text-gray-700 text-sm placeholder-gray-400"
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-600/35 rounded-xl focus:ring-1 focus:ring-primary-700 focus:outline-none text-gray-700 text-sm placeholder-gray-400"
               />
             </div>
           </div>
@@ -144,8 +235,13 @@ const CreateContact = () => {
               value={formData.message}
               onChange={handleChange}
               placeholder="Type your message..."
-              className="w-full px-4 py-3 bg-white/10 border border-gray-600/35 rounded-lg focus:ring-1 focus:ring-primary-700/25 focus:outline-none text-gray-700 placeholder-gray-400 resize-none"
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-1 focus:outline-none text-gray-700 placeholder-gray-400 resize-none ${
+                errors.message ? "border-red-500" : "border-gray-600/35"
+              }`}
             ></textarea>
+            {errors.message && (
+              <p className="text-red-500 text-xs mt-1">{errors.message}</p>
+            )}
           </div>
 
           {/* Submit Button */}

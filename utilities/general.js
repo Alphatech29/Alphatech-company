@@ -14,7 +14,6 @@ const getWebsiteSettings = async () => {
   }
 };
 
-
 // Update website settings by fields
 const updateWebsiteSettings = async (fields) => {
   try {
@@ -46,7 +45,33 @@ const updateWebsiteSettings = async (fields) => {
   }
 };
 
+// Update only the avatar in website settings
+const addWebsiteAvatar = async (avatarPath) => {
+  try {
+    if (!avatarPath) {
+      return { success: false, message: "No avatar path provided for update." };
+    }
+
+    const sql = `UPDATE websettings SET avatar = ? WHERE id = 1`;
+    const [result] = await pool.query(sql, [avatarPath]);
+
+    if (result.affectedRows === 0) {
+      return { success: false, message: "No website settings were updated." };
+    }
+
+    return { success: true, message: "Website avatar updated successfully." };
+  } catch (err) {
+    console.error("Error updating website avatar:", err.message);
+    return {
+      success: false,
+      message: "Error updating website avatar.",
+      error: err.message,
+    };
+  }
+};
+
 module.exports = {
   getWebsiteSettings,
   updateWebsiteSettings,
+  addWebsiteAvatar,
 };

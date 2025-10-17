@@ -42,29 +42,27 @@ export const updateWebsiteSettings = async (fieldsToUpdate) => {
   try {
     if (
       !fieldsToUpdate ||
-      (fieldsToUpdate instanceof FormData
-        ? ![...fieldsToUpdate.entries()].length
-        : Object.keys(fieldsToUpdate).length === 0)
+      Object.keys(fieldsToUpdate).length === 0
     ) {
       throw new Error("No fields provided for update.");
     }
 
-    const isFormData = fieldsToUpdate instanceof FormData;
 
     const response = await axios.put("/api/update-field", fieldsToUpdate, {
-      headers: isFormData
-        ? {}
-        : { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
     });
 
-    const data = Array.isArray(response.data)
+    const payload = Array.isArray(response.data)
       ? response.data[0]
       : response.data;
 
     return {
-      success: data?.success ?? false,
-      message: data?.message || "Website settings updated successfully!",
-      data: data?.data || null,
+      success: payload?.success ?? false,
+      message: payload?.message || "Website settings updated successfully!",
+      data: payload?.data || null,
     };
   } catch (error) {
     console.error(
@@ -78,6 +76,9 @@ export const updateWebsiteSettings = async (fieldsToUpdate) => {
         error.response?.data?.message ||
         "An error occurred while updating website settings.",
       error: error.response?.data || error.message,
+      data: null,
     };
   }
 };
+
+

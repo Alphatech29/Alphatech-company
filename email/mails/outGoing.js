@@ -13,7 +13,7 @@ function formatName(name) {
     .join(" ");
 }
 
-async function sendUserOutgoingEmail({ name, email, subject, message }) {
+async function sendUserOutgoingEmail({ receiver_name, email, subject, message, sender_name, sender_position }) {
   try {
     // Load website settings
     const settingsArray = await getWebsiteSettings();
@@ -33,13 +33,15 @@ async function sendUserOutgoingEmail({ name, email, subject, message }) {
 
     // Render email template with dynamic data
     const html = await ejs.renderFile(templatePath, {
-      name: formatName(name),
+      receiver_name: formatName(receiver_name),
       email,
       message,
       subject,
+      sender_name: formatName(sender_name),
+      sender_position,
       site_name: settings.site_name,
       site_url: settings.site_url,
-      site_avatar: settings.site_avatar,
+      avatar: settings.avatar,
       contact_email: settings.contact_email,
       contact_phone: settings.contact_phone,
       address: settings.address,

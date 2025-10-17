@@ -174,41 +174,47 @@
   <div class="wrapper">
     <!-- HEADER -->
     <div class="header">
-      <img
-        src="<%= site_url %><%= site_avatar %>"
-        alt="AlphaTech Logo"
-        class="logo"
-      />
+      <img src="<%= site_url %><%= avatar %>" alt="AlphaTech Logo" class="logo" />
       <p>Official Communication.</p>
     </div>
 
     <!-- CONTENT -->
     <div class="content">
-      <p class="greeting">Dear <strong><%= name %></strong>,</p>
+      <p class="greeting">Dear <strong>
+          <%= receiver_name %>
+        </strong>,</p>
 
       <div class="message">
-        <%- message
-          .split(/\n\s*\n/)
-          .map(p => `<p>${p.trim().replace(/\n/g, '<br>')}</p>`)
+        <%- message .split(/\n\s*\n/) .map(p=> `<p>${p.trim().replace(/\n/g, '<br>')}</p>`)
           .join('') %>
       </div>
 
       <div class="signature">
         <p>Warm regards,</p>
         <p>
-          <strong>AlphaTech Multimedia Team</strong><br />
-          <a href="<%= site_url %>" style="color:#DAA520; text-decoration:none;">
+          <strong>
+            <%= sender_name %>
+          </strong><br />
+          <span>
+            <%= sender_position %>
+          </span><br />
+          <span>
             <%= site_name %>
-          </a>
+          </span>
         </p>
       </div>
+
     </div>
 
     <!-- FOOTER -->
     <div class="footer">
       <p>
-        © <%= new Date().getFullYear() %> <strong><%= site_name %></strong>. All Rights Reserved.<br />
-        <em><%= site_name %> — Let’s turn your imagination into reality.</em>
+        © <%= new Date().getFullYear() %> <strong>
+            <%= site_name %>
+          </strong>. All Rights Reserved.<br />
+          <em>
+            <%= site_name %> — Let’s turn your imagination into reality.
+          </em>
       </p>
 
       <p style="margin-top: 8px;">
@@ -220,24 +226,29 @@
 
       <p style="margin-top: 10px; font-size: 12px; color: #777;">
         Head Office: <%= address %><br />
-        Phone: <%= contact_phone %> |
-        Email:
-        <a href="mailto:<%= contact_email %>" style="color:#DAA520; text-decoration:none;"><%= contact_email %></a>
+          Phone: <%= contact_phone %> |
+            Email:
+            <a href="mailto:<%= contact_email %>" style="color:#DAA520; text-decoration:none;">
+              <%= contact_email %>
+            </a>
       </p>
 
       <div class="social-links">
         <p class="social-icons">
           <a href="<%= facebook %>"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"></a>
           <a href="<%= twitter %>"><img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter"></a>
-          <a href="<%= instagram %>"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"></a>
+          <a href="<%= instagram %>"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png"
+              alt="Instagram"></a>
           <a href="<%= linkedin %>"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn"></a>
           <a href="<%= tiktok %>"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046123.png" alt="TikTok"></a>
         </p>
       </div>
 
       <p style="margin-top: 14px; font-size: 11px; color: #aaa;">
-        You’re receiving this email because you’re a valued contact of <%= site_name %>.<br />
-        If you no longer wish to receive our messages,
+        You are receiving this email as a valued contact of <strong>
+          <%= site_name %>
+        </strong>.<br />
+        If you prefer not to receive future communications from us, you may
         <a href="<%= unsubscribe_link %>" style="color:#DAA520; text-decoration:none;">unsubscribe here</a>.
       </p>
     </div>
