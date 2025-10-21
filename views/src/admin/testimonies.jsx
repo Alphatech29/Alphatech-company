@@ -146,7 +146,7 @@ const Testimonies = () => {
   };
 
   return (
-    <div className="min-h-screen py-8 relative">
+    <div className="min-h-screen py-5 relative">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
           <h1 className="text-2xl font-extrabold text-gray-900">

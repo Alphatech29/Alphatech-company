@@ -5,6 +5,7 @@ const { createTestimony, fetchTestimonies, removeTestimonyById } = require("../c
 const { getAllFaqs, createFaq, updateFaqById, deleteFaqById } = require("../controllers/admin/faqs");
 const { createContactForm, fetchAllContactForms, removeContactForm } = require("../controllers/admin/adminContact");
 const { createAdminContactForm } = require("../controllers/admin/contact");
+const { createPageController, getPagesController, updatePageController, getPageByIdController, getPageBySlugController } = require("../controllers/admin/page");
 const generalRoute = express.Router();
 
 
@@ -25,6 +26,11 @@ generalRoute.post("/send-message" ,createContactForm);
 generalRoute.get("/contact" ,fetchAllContactForms);
 generalRoute.delete("/remove/:id" ,removeContactForm);
 generalRoute.post("/create-contact" ,createAdminContactForm);
+generalRoute.post("/create-page" ,createPageController)
+generalRoute.put("/page-edit/:id" ,updatePageController)
+generalRoute.get("/get-page/:id" ,getPageByIdController)
+generalRoute.get("/get-page" ,getPagesController)
+generalRoute.get("/page/:slug" ,getPageBySlugController)
 
 
 module.exports = generalRoute;

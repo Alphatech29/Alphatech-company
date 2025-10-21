@@ -148,14 +148,14 @@ export default function Footer() {
       <div className="border-t border-primary-300 mt-8 py-4 px-4 tab:px-16 flex flex-col justify-center items-center gap-4 text-primary-300 text-sm">
         <div className="flex flex-wrap justify-center gap-4">
           <a
-            href="/privacy-policy"
+            href="/page/privacy-policy"
             className="hover:text-primary-400 transition"
           >
             Privacy Policy
           </a>
           |
           <a
-            href="/terms-of-service"
+            href="/page/terms-of-service"
             className="hover:text-primary-400 transition"
           >
             Terms of Service

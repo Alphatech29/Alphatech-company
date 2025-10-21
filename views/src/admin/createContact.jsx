@@ -105,7 +105,7 @@ const handleSubmit = async (e) => {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-start justify-start py-10">
+    <div className="min-h-screen flex flex-col items-start justify-start py-5">
       {/* Back to Dashboard Link */}
       <div className="mb-5">
         <NavLink

@@ -102,7 +102,7 @@ const Faqs = () => {
   };
 
   return (
-    <div className="min-h-screen py-8">
+    <div className="min-h-screen py-5">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
         <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">FAQs Dashboard</h1>

@@ -86,7 +86,7 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen py-8">
+    <div className="min-h-screen py-5">
       <div>
         <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-start">
           Website Settings

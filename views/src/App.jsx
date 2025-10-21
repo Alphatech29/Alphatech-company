@@ -9,12 +9,11 @@ import Service from "./general/service";
 import Adminroute from "./route/adminRoute";
 import PrivateRoute from "./utilities/authPrivate";
 import { AuthProvider } from "./utilities/authContext";
-import PrivacyPolicy from "./general/privacy";
 import HireUs from "./general/hireUs";
 import Pricing from "./general/pricing";
-import TermsService from "./general/terms-service";
 import NotFound from "./general/notFound";
 import Login from "./auth/login";
+import Page from "./general/page";
 
 // Layout wrapper to conditionally hide header/footer
 function Layout({ children }) {
@@ -43,8 +42,7 @@ export default function App() {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/services" element={<Service />} />
           <Route path="/hire-us" element={<HireUs />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-of-service" element={<TermsService />} />
+          <Route path="/page/:slug" element={<Page />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/admin/login" element={<Login />} />
           {/* Catch-all route for 404 */}

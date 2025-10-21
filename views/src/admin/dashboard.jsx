@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "../admin/partials/hearder";
-import Sidebar from "../admin/partials/sidebar";
+import Sidebar from "../admin/partials/Sidebar";
 import Footer from "../admin/partials/footer";
 
 export default function Dashboard() {
