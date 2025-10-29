@@ -14,6 +14,7 @@ import Pricing from "./general/pricing";
 import NotFound from "./general/notFound";
 import Login from "./auth/login";
 import Page from "./general/page";
+import Book from "./general/book";
 
 // Layout wrapper to conditionally hide header/footer
 function Layout({ children }) {
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="/hire-us" element={<HireUs />} />
           <Route path="/page/:slug" element={<Page />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/book-a-consultation" element={<Book />} />
           <Route path="/admin/login" element={<Login />} />
           {/* Catch-all route for 404 */}
           <Route path="*" element={<NotFound />} />

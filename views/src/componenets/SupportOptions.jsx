@@ -18,7 +18,7 @@ const SupportOptions = () => {
       title: "Schedule a Call",
       description: "Book a consultation session",
       button: "BOOK NOW",
-      link: "/book-a-section",
+      link: "/book-a-consultation",
       icon: "https://cdn.vectorstock.com/i/1000v/62/98/may-2-flat-daily-calendar-icon-date-vector-17656298.avif",
     },
     {

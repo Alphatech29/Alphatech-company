@@ -15,7 +15,7 @@ const CreatePage = () => {
   const [wordCount, setWordCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Generate slug automatically from title
+
   const generateSlug = (text) =>
     text
       .toLowerCase()
@@ -24,7 +24,6 @@ const CreatePage = () => {
       .replace(/\s+/g, "-")
       .replace(/--+/g, "-");
 
-  // 🔹 Handle input field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -34,14 +33,12 @@ const CreatePage = () => {
     }));
   };
 
-  // 🔹 Handle editor changes and update word count
   const handleEditorChange = (value) => {
     setFormData((prev) => ({ ...prev, content: value }));
     const text = value.replace(/<[^>]+>/g, "").trim();
     setWordCount(text ? text.split(/\s+/).length : 0);
   };
 
-  // 🔹 Submit new page data
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

@@ -199,7 +199,7 @@ export default function HireUs({
               <FaWhatsapp size={24} /> Chat on WhatsApp
             </a>
             <NavLink
-              to="/book-consultation"
+              to="/book-a-consultation"
               className="flex items-center gap-3 bg-primary-500 text-white px-6 py-3 rounded-xl shadow-lg hover:scale-105 transition"
             >
               <FaCalendarAlt size={24} /> Book a Consultation

@@ -98,6 +98,7 @@ export default function Footer() {
             {[
               { name: "Pricing", href: "/pricing" },
               { name: "Our Services", href: "/services" },
+               { name: "Book Consultationt", href: "/book-a-consultation" },
               { name: "About", href: "/about-us" },
               { name: "Contact", href: "/contact-us" },
             ].map((link) => (
@@ -160,6 +161,7 @@ export default function Footer() {
           >
             Terms of Service
           </a>
+
         </div>
         <p className="text-center">
           &copy; {new Date().getFullYear()} Alphatech Multimedia Technologies -
