@@ -17,7 +17,7 @@ export default function sidebar({ isOpen, setIsOpen }) {
 
   const links = [
     { name: "Dashboard", path: "/dashboard", icon: <FaTachometerAlt /> },
-    { name: "Appointment", path: "/dashboard/appointment", icon: <FaCalendarAlt /> },
+    { name: "Consultation", path: "/dashboard/consultation", icon: <FaCalendarAlt /> },
     { name: "Portfolio", path: "/dashboard/portfolio", icon: <FaBuromobelexperte  /> },
     { name: "Faqs", path: "/dashboard/faqs", icon: <FaQuestionCircle /> },
     { name: "Messages", path: "/dashboard/message", icon: <FaQuoteRight /> },

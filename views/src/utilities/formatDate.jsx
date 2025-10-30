@@ -30,3 +30,17 @@ export const formatTime = (date) => {
     minute: "2-digit",
   });
 };
+
+
+export const formatTimeOnly = (timeString) => {
+  if (!timeString) return "";
+  const today = new Date().toISOString().split("T")[0];
+  const dateTime = new Date(`${today}T${timeString}`);
+
+  return dateTime.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+

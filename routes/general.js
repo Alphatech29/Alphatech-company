@@ -6,7 +6,7 @@ const { getAllFaqs, createFaq, updateFaqById, deleteFaqById } = require("../cont
 const { createContactForm, fetchAllContactForms, removeContactForm } = require("../controllers/admin/adminContact");
 const { createAdminContactForm } = require("../controllers/admin/contact");
 const { createPageController, getPagesController, updatePageController, getPageByIdController, getPageBySlugController } = require("../controllers/admin/page");
-const { createConsultationBooking, verifyConsultationTransaction, fetchAllConsultationBookings } = require("../controllers/admin/consultation");
+const { createConsultationBooking, verifyConsultationTransaction, fetchAllConsultationBookings, consultationPrepared, updateConsultationBooking } = require("../controllers/admin/consultation");
 const { paystackWebhook } = require("../utilities/paystackWebhook");
 const generalRoute = express.Router();
 
@@ -34,6 +34,8 @@ generalRoute.get("/get-page/:id" ,getPageByIdController)
 generalRoute.get("/get-page" ,getPagesController)
 generalRoute.get("/page/:slug" ,getPageBySlugController)
 generalRoute.post("/consultation" ,createConsultationBooking)
+generalRoute.post("/consultation-prepard" ,consultationPrepared)
+generalRoute.put("/consultation-reschedule" ,updateConsultationBooking)
 generalRoute.get("/get-consultation" ,fetchAllConsultationBookings)
 generalRoute.post("/webhook",paystackWebhook);
 generalRoute.get("/verify-transaction",verifyConsultationTransaction);

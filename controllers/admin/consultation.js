@@ -1,6 +1,8 @@
 const { initializePayment, verifyTransaction } = require("../../utilities/paystack");
 const { getWebsiteSettings } = require("../../utilities/general");
-const {getAllConsultationBookings} = require("../../utilities/consultation");
+const {getAllConsultationBookings, getConsultationBookingById, updateConsultationBookingDateTime} = require("../../utilities/consultation");
+const sendConsultationPreparedEmail = require("../../email/mails/consultationPrepared");
+const sendConsultationRescheduleEmail = require("../../email/mails/consultationReschedule");
 
 async function createConsultationBooking(req, res) {
   try {
@@ -222,4 +224,163 @@ async function fetchAllConsultationBookings(req, res) {
 }
 
 
-module.exports = { createConsultationBooking, verifyConsultationTransaction, fetchAllConsultationBookings  };
+async function consultationPrepared(req, res) {
+  try {
+    const { id, consultation_link } = req.body;
+
+    if (!id || !consultation_link) {
+      console.warn("Validation failed: Missing required fields.");
+      return res.status(400).json({
+        success: false,
+        message: "Missing consultation ID or consultation link.",
+      });
+    }
+
+    // Fetch the consultation booking by ID
+    const bookingResult = await getConsultationBookingById(id);
+
+    if (!bookingResult || !bookingResult.success) {
+      console.warn(`Booking not found or error for id ${id}`);
+      return res.status(404).json({
+        success: false,
+        message: bookingResult?.message || "Consultation booking not found.",
+      });
+    }
+
+    const booking = bookingResult.data;
+
+    const requiredFields = [
+      "full_Name",
+      "email",
+      "date",
+      "time",
+      "duration",
+      "mode",
+      "cost",
+    ];
+
+    for (const field of requiredFields) {
+      if (!booking[field]) {
+        console.warn(`Missing required booking field: ${field}`);
+        return res.status(400).json({
+          success: false,
+          message: `Booking is missing required field: ${field}`,
+        });
+      }
+    }
+
+    // Send the consultation prepared email
+    const emailResult = await sendConsultationPreparedEmail({
+      full_name: booking.full_Name,
+      email: booking.email,
+      date: booking.date,
+      time: booking.time,
+      duration: booking.duration,
+      mode: booking.mode,
+      consultation_link,
+      cost: booking.cost,
+    });
+
+    if (!emailResult || !emailResult.success) {
+      console.error(`Failed to send email to ${booking.email}:`, emailResult?.error || "Unknown error");
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send consultation email.",
+        error: emailResult?.error || "Unknown error occurred while sending email.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Consultation Prepared email sent successfully.",
+    });
+  } catch (error) {
+    console.error("Error in consultationPrepared:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to send consultation reply.",
+      error: error.message,
+    });
+  }
+}
+
+async function updateConsultationBooking(req, res) {
+  try {
+    const { id, date, time } = req.body;
+
+    // Validate required fields
+    if (!id || !date || !time) {
+      console.warn("Validation failed: Missing required fields.");
+      return res.status(400).json({
+        success: false,
+        message: "Missing consultation ID, date, or time.",
+      });
+    }
+
+    // Update the booking in the database
+    const updateResult = await updateConsultationBookingDateTime(id, date, time);
+
+    if (!updateResult.success) {
+      console.warn(`Failed to update booking with id ${id}:`, updateResult.message);
+      return res.status(404).json({
+        success: false,
+        message: updateResult.message || "Failed to update consultation booking.",
+      });
+    }
+
+    // Fetch the updated booking details
+    const bookingResult = await getConsultationBookingById(id);
+    if (!bookingResult.success) {
+      console.warn(`Booking not found after update for id ${id}`);
+      return res.status(404).json({
+        success: false,
+        message: "Updated consultation booking not found.",
+      });
+    }
+
+    const booking = bookingResult.data;
+
+    // Send the consultation reschedule email
+    const emailResult = await sendConsultationRescheduleEmail({
+      full_name: booking.full_Name,
+      email: booking.email,
+      date: booking.date,
+      time: booking.time,
+      duration: booking.duration,
+      mode: booking.mode,
+    });
+
+    if (!emailResult.success) {
+      console.error(`Failed to send reschedule email to ${booking.email}:`, emailResult.error);
+      // We return success for the update but notify email sending failed
+      return res.status(200).json({
+        success: true,
+        message: "Consultation booking updated, but failed to send reschedule email.",
+        emailError: emailResult.error,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Consultation booking updated and reschedule email sent successfully.",
+    });
+
+  } catch (error) {
+    console.error("Error in updateConsultationBooking:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An internal server error occurred while updating the consultation booking.",
+      error: error.message,
+    });
+  }
+}
+
+
+module.exports = {
+  createConsultationBooking,
+  verifyConsultationTransaction,
+  fetchAllConsultationBookings,
+  consultationPrepared,
+  updateConsultationBooking,
+};
+

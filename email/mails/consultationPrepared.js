@@ -1,10 +1,10 @@
-const sendEmail = require("../../email/transporter/transpoter");
+const sendEmail = require("../transporter/transpoter");
 const ejs = require("ejs");
 const path = require("path");
 const { getWebsiteSettings } = require("../../utilities/general");
 
 function formatName(name) {
-  if (!name) return "Valued Customer";
+  if (!name) return "Valued Client";
   return name
     .trim()
     .toLowerCase()
@@ -13,63 +13,59 @@ function formatName(name) {
     .join(" ");
 }
 
-function formatTime(time) {
-  if (!time) return "";
-  const [hour, minute] = time.split(":").map(Number);
-  const period = hour >= 12 ? "PM" : "AM";
-  const formattedHour = hour % 12 || 12;
-  return `${formattedHour}:${minute.toString().padStart(2, "0")} ${period}`;
+function formatTimeTo12Hour(timeStr) {
+  if (!timeStr) return "";
+  const [hourStr, minuteStr] = timeStr.split(":");
+  let hour = parseInt(hourStr, 10);
+  const minute = minuteStr;
+  const ampm = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12 || 12;
+  return `${hour}:${minute} ${ampm}`;
 }
 
-
-function formatAmount(amount) {
-  if (amount == null || isNaN(amount)) return "₦0.00";
-  return `₦${Number(amount).toLocaleString("en-NG", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
+function formatCost(amount, currency = "$") {
+  if (typeof amount === "number") {
+    return `${currency}${amount.toLocaleString()}`;
+  }
+  return amount;
 }
 
-async function sendBookingConfirmationEmail({
+async function sendConsultationPreparedEmail({
   full_name,
   email,
-  subject = "Congratulation Booking Consultation Successful",
   date,
   time,
   duration,
   mode,
+  consultation_link,
   cost,
-  transaction_id,
+  subject = "Your Consultation Details Are Ready",
 }) {
   try {
+    // Retrieve website settings
     const settingsArray = await getWebsiteSettings();
     if (!settingsArray || !settingsArray.length) {
       throw new Error("Website settings not found.");
     }
-
     const settings = settingsArray[0];
-
-    // Apply formatting
-    const formattedTime = formatTime(time);
-    const formattedCost = formatAmount(cost);
 
     // Define path to the EJS template
     const templatePath = path.join(
       process.cwd(),
       "email",
       "templates",
-      "consultation.ejs"
+      "consultationPrepared.ejs"
     );
 
-    // Render the EJS HTML template
+    // Render EJS template
     const html = await ejs.renderFile(templatePath, {
       full_name: formatName(full_name),
       date,
-      time: formattedTime,
+      time: formatTimeTo12Hour(time),
       duration,
       mode,
-      cost: formattedCost,
-      transaction_id,
+      consultation_link,
+      cost: formatCost(cost, settings.currency),
       subject,
       site_name: settings.site_name,
       site_url: settings.site_url,
@@ -82,10 +78,9 @@ async function sendBookingConfirmationEmail({
       instagram: settings.instagram,
       tiktok: settings.tiktok,
       linkedin: settings.linkedin,
-      unsubscribe_link: "#",
     });
 
-    // Send email via your configured transporter
+    // Send email
     await sendEmail({
       from: `"${settings.site_name}" <${settings.admin_email}>`,
       to: email,
@@ -93,10 +88,12 @@ async function sendBookingConfirmationEmail({
       html,
     });
 
+    return { success: true };
   } catch (error) {
-    console.error("Failed to send booking confirmation email:", error.message);
-    throw error;
+    console.error("Failed to send consultation prepared email:", error.message);
+
+    return { success: false, error: error.message || "Unknown error" };
   }
 }
 
-module.exports = sendBookingConfirmationEmail;
+module.exports = sendConsultationPreparedEmail;

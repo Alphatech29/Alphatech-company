@@ -69,8 +69,7 @@ async function insertConsultationBooking(booking) {
 async function getAllConsultationBookings() {
   try {
     const [rows] = await pool.query(
-      // Convert the DATE column to a plain string using MySQL’s DATE_FORMAT
-      `SELECT id, 
+      `SELECT id,
               full_Name,
               email,
               company,
@@ -106,6 +105,87 @@ async function getAllConsultationBookings() {
   }
 }
 
+async function getConsultationBookingById(id) {
+  try {
+    const [rows] = await pool.query(
+      `SELECT id, 
+              full_Name,
+              email,
+              company,
+              role,
+              phone,
+              whatsapp,
+              country,
+              location,
+              address,
+              mode,
+              DATE_FORMAT(date, '%Y-%m-%d') AS date,
+              time,
+              duration,
+              cost,
+              reference_websites,
+              project_details,
+              created_at
+       FROM consultation_bookings
+       WHERE id = ?`,
+      [id]
+    );
+
+    if (rows.length === 0) {
+      return {
+        success: false,
+        message: `No consultation booking found with id ${id}`,
+        data: null,
+      };
+    }
+
+    return {
+      success: true,
+      message: "Consultation booking retrieved successfully",
+      data: rows[0],
+    };
+  } catch (error) {
+    console.error("Error fetching consultation booking:", error);
+    return {
+      success: false,
+      message: "Internal Server Error",
+      error: error.message,
+    };
+  }
+}
+
+async function updateConsultationBookingDateTime(id, newDate, newTime) {
+  try {
+    const [result] = await pool.query(
+      `UPDATE consultation_bookings
+       SET date = ?, time = ?
+       WHERE id = ?`,
+      [newDate, newTime, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return {
+        success: false,
+        message: `No consultation booking found with id ${id}`,
+      };
+    }
+
+    return {
+      success: true,
+      message: "Consultation booking updated successfully",
+    };
+  } catch (error) {
+    console.error("Error updating consultation booking:", error);
+    return {
+      success: false,
+      message: "Internal Server Error",
+      error: error.message,
+    };
+  }
+}
 
 
-module.exports = { insertConsultationBooking, getAllConsultationBookings };
+
+
+
+module.exports = { insertConsultationBooking, getAllConsultationBookings, getConsultationBookingById, updateConsultationBookingDateTime };
