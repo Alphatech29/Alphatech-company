@@ -83,7 +83,7 @@ export default function WebsiteProfile() {
   };
 
   return (
-    <div className="min-h-screen py-5">
+    <div className="min-h-screen py-8">
       <div className=" bg-white shadow-xl rounded-3xl p-8 sm:p-12">
         {/* Render settings */}
         {Array.isArray(settings) &&

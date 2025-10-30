@@ -90,7 +90,7 @@ const ContactDashboard = () => {
 
   return (
     <div className="min-h-screen py-8">
-      <div className="max-w-7xl mx-auto">
+      <div>
         {/* Header Section */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-extrabold text-gray-900">Contact Messages</h1>
