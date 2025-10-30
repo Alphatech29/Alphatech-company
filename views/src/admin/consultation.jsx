@@ -9,21 +9,25 @@ const Consultation = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchConsultations = async () => {
-      try {
-        const response = await getAllConsultationBookings();
-        if (response?.success) {
-          setConsultations(response.data || []);
-        }
-      } catch (error) {
-        console.error("Error fetching consultations:", error);
-      } finally {
-        setLoading(false);
+ useEffect(() => {
+  const fetchConsultations = async () => {
+    try {
+      const response = await getAllConsultationBookings();
+      if (response?.success) {
+        const sortedData = (response.data || []).sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+        setConsultations(sortedData);
       }
-    };
-    fetchConsultations();
-  }, []);
+    } catch (error) {
+      console.error("Error fetching consultations:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchConsultations();
+}, []);
+
 
   const filteredConsultations = consultations.filter((item) =>
     item.full_Name.toLowerCase().includes(searchTerm.toLowerCase())
