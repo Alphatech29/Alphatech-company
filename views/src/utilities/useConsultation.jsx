@@ -34,6 +34,11 @@ export function useConsultationBooking() {
   const [fieldErrors, setFieldErrors] = useState({});
   const [showCalendar, setShowCalendar] = useState(false);
 
+
+   useEffect(() => {
+      document.title = "Consultation | We build digital solutions that help businesses connect and grow..";
+    }, []);
+
   /** Verify transaction if reference exists */
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
