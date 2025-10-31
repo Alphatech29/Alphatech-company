@@ -14,6 +14,9 @@ import Page from "../admin/page";
 import EditPage from "../admin/editPage";
 import Consultation from "../admin/consultation";
 import ConsultationDetails from "../admin/consultationDetails";
+import CreateBlog from "../admin/createBlog";
+import BlogDashboard from "../admin/blog";
+import EditBlog from "../admin/editBlog ";
 //import Home from "../general/shop/index";
 
 
@@ -32,6 +35,9 @@ export default function AdminRoute() {
          <Route path="page/create" element={<CreatePage/>}></Route>
          <Route path="page/edit/:id" element={<EditPage/>}></Route>
          <Route path="page" element={<Page/>}></Route>
+          <Route path="blog/create" element={<CreateBlog/>}></Route>
+          <Route path="blog" element={<BlogDashboard/>}></Route>
+          <Route path="blog/edit/:id" element={<EditBlog />} />
          <Route path="consultation" element={<Consultation/>}></Route>
          <Route path="consultation/details/:id" element={<ConsultationDetails/>}></Route>
          <Route path="*" element={<NotFound/>}></Route>

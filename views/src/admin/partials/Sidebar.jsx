@@ -8,7 +8,8 @@ import {
   FaQuestionCircle,
 FaCommentDots,
 FaQuoteRight,
-FaQrcode
+FaQrcode,
+FaBlogger
 } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -21,6 +22,7 @@ export default function sidebar({ isOpen, setIsOpen }) {
     { name: "Portfolio", path: "/dashboard/portfolio", icon: <FaBuromobelexperte  /> },
     { name: "Faqs", path: "/dashboard/faqs", icon: <FaQuestionCircle /> },
     { name: "Messages", path: "/dashboard/message", icon: <FaQuoteRight /> },
+    { name: "Blog", path: "/dashboard/blog", icon: <FaBlogger /> },
     { name: "Testimonies", path: "/dashboard/testimonies", icon: <FaCommentDots     /> },
     { name: "Pages", path: "/dashboard/page", icon: <FaQrcode      /> },
     { name: "Settings", path: "/dashboard/settings", icon: <FaCog /> },

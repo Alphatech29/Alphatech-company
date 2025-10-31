@@ -173,9 +173,9 @@ const ServiceSection = () => {
           >
             <FaTools className="text-primary-700 text-3xl" />
           </motion.div>
-          <h3 className="text-primary-800 font-semibold text-lg mb-2">IT Consulting</h3>
+          <h3 className="text-primary-800 font-semibold text-lg mb-2">Web Management</h3>
           <p className="text-primary-700 text-base">
-            Delivering tailored technology solutions, we align IT strategies with business goals, optimize processes, and integrate best practices. Our flexible approach ensures adaptability to change while focusing on what matters most for long-term success.
+            Delivering tailored web management solutions, we align online strategies with business goals, optimize digital processes, and integrate best practices. Our flexible approach ensures adaptability to change while focusing on what matters most for long-term success.
           </p>
         </motion.div>
       </div>

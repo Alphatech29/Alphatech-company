@@ -357,8 +357,19 @@ export default function Book() {
     {loading ? "Processing…" : "Proceed to payment"}
   </button>
 </form>
-
       </main>
+
+         {/* Call to Action */}
+      <section className="bg-gradient-to-r from-primary-200 via-primary-400 to-primary-300 py-20 text-center text-white ">
+        <h2 className="text-4xl font-bold mb-6">Ready to Start Your Project?</h2>
+        <p className="mb-8 sm-px-4">Contact us today and let's build something amazing together.</p>
+        <NavLink
+          to="/hire-us"
+          className="bg-white text-primary-500 font-semibold px-8 py-4 rounded-full shadow-lg hover:bg-primary-100 transition"
+        >
+          Get in Touch
+        </NavLink>
+      </section>
 
       {/* Calendar Modal */}
       <AnimatePresence>
