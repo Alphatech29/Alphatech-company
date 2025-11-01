@@ -1,9 +1,16 @@
 const asyncHandler = require("../../middleWare/asyncHandler");
-const { insertBlog, getBlogs, deleteBlogById, updateBlogById} = require("../../utilities/blog");
+const { 
+  insertBlog, 
+  getBlogs, 
+  deleteBlogById, 
+  updateBlogById, 
+  getBlogBySlug, 
+  insertBlogComment,
+  getCommentsByBlogId
+} = require("../../utilities/blog");
 
-// Controller to create a new blog
+
 const createBlog = asyncHandler(async (req, res) => {
-
   try {
     let blogData;
 
@@ -18,13 +25,13 @@ const createBlog = asyncHandler(async (req, res) => {
       });
     }
 
-    // Handle cover image upload
+
     blogData.cover_image =
       req.files && req.files.length > 0
         ? `/uploads/${req.files[0].filename}`
         : null;
 
-    // Validate required fields
+
     const { title, slug, content, author, category, cover_image } = blogData;
     if (!title || !slug || !content || !author || !category) {
       console.warn("Missing required fields:", {
@@ -40,10 +47,10 @@ const createBlog = asyncHandler(async (req, res) => {
       });
     }
 
-    // Insert blog into database
+
     const result = await insertBlog(title, slug, content, author, category, cover_image);
 
-    // Respond based on the result
+
     if (result.success) {
       return res.status(201).json({
         success: true,
@@ -68,9 +75,87 @@ const createBlog = asyncHandler(async (req, res) => {
   }
 });
 
-// Controller to fetch all blogs
-const getBlogController = asyncHandler(async (req, res) => {
 
+const addBlogCommentController = asyncHandler(async (req, res) => {
+  const { blog_id, commenter_name, comment_text } = req.body;
+
+
+  if (!blog_id || !commenter_name || !comment_text) {
+    console.warn("Missing required fields for comment:", { blog_id, commenter_name, comment_text });
+    return res.status(400).json({
+      success: false,
+      message: "Missing field required.",
+    });
+  }
+
+  try {
+    const result = await insertBlogComment(blog_id, commenter_name, comment_text);
+
+    if (result.success) {
+      return res.status(201).json({
+        success: true,
+        message: "Comment added successfully.",
+        insertId: result.insertId,
+      });
+    } else {
+      console.error("Failed to insert comment:", result.message);
+      return res.status(500).json({
+        success: false,
+        message: result.message || "Failed to add comment.",
+        error: result.error,
+      });
+    }
+  } catch (error) {
+    console.error("Exception in addBlogCommentController:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while adding comment.",
+      error: error.message || String(error),
+    });
+  }
+});
+
+
+const getCommentsByBlogIdController = asyncHandler(async (req, res) => {
+  const { blog_id } = req.params;
+
+  if (!blog_id || isNaN(blog_id)) {
+    console.warn(`[WARN] Invalid or missing blog_id: ${blog_id}`);
+    return res.status(400).json({
+      success: false,
+      message: "Invalid or missing blog_id.",
+    });
+  }
+
+  try {
+    const result = await getCommentsByBlogId(blog_id);
+
+    if (result.success) {
+      return res.status(200).json({
+        success: true,
+        message: result.message || "Comments retrieved successfully.",
+        data: result.data,
+      });
+    } else {
+      console.warn(`[WARN] No comments found for blog_id: ${blog_id}`);
+      return res.status(404).json({
+        success: false,
+        message: result.message || "No comments found for this blog.",
+        data: [],
+      });
+    }
+  } catch (error) {
+    console.error(`[ERROR] Exception in getCommentsByBlogIdController:`, error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch comments due to server error.",
+      error: error.message || String(error),
+    });
+  }
+});
+
+
+const getBlogController = asyncHandler(async (req, res) => {
   try {
     const result = await getBlogs();
 
@@ -96,7 +181,6 @@ const getBlogController = asyncHandler(async (req, res) => {
     });
   }
 });
-
 
 const deleteBlogController = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -138,7 +222,6 @@ const deleteBlogController = asyncHandler(async (req, res) => {
 });
 
 
-// Controller to update a blog by ID
 const updateBlogController = asyncHandler(async (req, res) => {
   const { id } = req.params;
   if (!id || (typeof id !== "string" && typeof id !== "number")) {
@@ -162,14 +245,13 @@ const updateBlogController = asyncHandler(async (req, res) => {
     });
   }
 
-  // Handle cover image upload if any
+
   if (req.files && req.files.length > 0) {
     blogData.cover_image = `/uploads/${req.files[0].filename}`;
   }
 
   const { title, slug, content, author, category, cover_image } = blogData;
 
-  // Optional: Validate required fields if you want to enforce all fields
   if (!title || !slug || !content || !author || !category) {
     console.warn("Missing required fields for update:", {
       title,
@@ -219,9 +301,53 @@ const updateBlogController = asyncHandler(async (req, res) => {
   }
 });
 
+
+const getBlogBySlugController = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+
+  if (!slug || typeof slug !== "string") {
+    console.warn(`[WARN] Invalid or missing blog slug: ${slug}`);
+    return res.status(400).json({
+      success: false,
+      message: "Invalid or missing blog slug.",
+      data: null,
+    });
+  }
+
+  try {
+    const result = await getBlogBySlug(slug);
+
+    if (result.success) {
+      return res.status(200).json({
+        success: true,
+        message: result.message || "Blog retrieved successfully.",
+        data: result.blog,
+      });
+    } else {
+      console.warn(`[WARN] Blog with slug "${slug}" not found`);
+      return res.status(404).json({
+        success: false,
+        message: result.message || "Blog not found.",
+        data: null,
+      });
+    }
+  } catch (error) {
+    console.error(`[ERROR] Exception in getBlogBySlugController:`, error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch blog due to server error.",
+      data: null,
+      error: error.message || String(error),
+    });
+  }
+});
+
 module.exports = {
   createBlog,
   getBlogController,
   deleteBlogController,
   updateBlogController,
+  getBlogBySlugController,
+  addBlogCommentController,
+  getCommentsByBlogIdController,
 };

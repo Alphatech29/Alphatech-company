@@ -2,18 +2,14 @@ import axios from "axios";
 
 export const createBlog = async (blogData, coverImageFile) => {
   try {
-    // Prepare FormData for file upload
     const formData = new FormData();
 
-    // Append the blog JSON data
     formData.append("blog", JSON.stringify(blogData));
 
-    // Append the cover image if available
     if (coverImageFile) {
       formData.append("cover_image", coverImageFile);
     }
 
-    // Send the request to backend
     const response = await axios.post("/api/createBlog", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -56,7 +52,6 @@ export const getBlogs = async () => {
 
     const payload = response.data;
 
-    // Validate and normalize response
     const blogs = Array.isArray(payload?.data) ? payload.data : [];
 
     return {
@@ -104,7 +99,6 @@ export const deleteBlog = async (id) => {
       data: payload?.data ?? { id },
     };
   } catch (error) {
-    // Handle both Axios errors and generic errors
     const errorMessage =
       error.response?.data?.message || error.message || "Unknown error";
 
@@ -168,3 +162,110 @@ export const updateBlog = async (id, blogData, coverImageFile) => {
   }
 };
 
+// Fetch a single blog by slug
+export const getBlogBySlug = async (slug) => {
+  if (!slug || typeof slug !== "string") {
+    return {
+      success: false,
+      message: "Invalid or missing blog slug.",
+      data: null,
+    };
+  }
+
+  try {
+    const response = await axios.get(`/api/getslug/${slug}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const payload = response.data;
+
+    return {
+      success: payload?.success ?? false,
+      message: payload?.message || "Blog retrieved successfully!",
+      data: payload?.data || null,
+    };
+  } catch (error) {
+    console.error(
+      `Fetching blog with slug "${slug}" failed:`,
+      error.response?.data || error.message
+    );
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message ||
+        `An error occurred while fetching blog with slug "${slug}".`,
+      error: error.response?.data || error.message,
+      data: null,
+    };
+  }
+};
+
+
+export const addBlogComment = async (commentData) => {
+  try {
+    const response = await axios.post("/api/addcomment", commentData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const payload = response.data;
+
+    return {
+      success: payload?.success ?? false,
+      message: payload?.message || "Comment added successfully!",
+      insertId: payload?.insertId || null,
+    };
+  } catch (error) {
+    console.error("Adding comment failed:", error.response?.data || error.message);
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message ||
+        "An error occurred while adding the comment.",
+      error: error.response?.data || error.message,
+    };
+  }
+};
+
+
+export const getCommentsByBlogId = async (blog_id) => {
+  if (!blog_id || (typeof blog_id !== "string" && typeof blog_id !== "number")) {
+    return {
+      success: false,
+      message: "Invalid or missing blog ID.",
+      data: [],
+    };
+  }
+
+  try {
+    const response = await axios.get(`/api/getcomment/${blog_id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const payload = response.data;
+
+    return {
+      success: payload?.success ?? false,
+      message: payload?.message || "Comments retrieved successfully!",
+      data: Array.isArray(payload?.data) ? payload.data : [],
+    };
+  } catch (error) {
+    console.error("Fetching comments failed:", error.response?.data || error.message);
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message ||
+        "An error occurred while fetching comments.",
+      error: error.response?.data || error.message,
+      data: [],
+    };
+  }
+};

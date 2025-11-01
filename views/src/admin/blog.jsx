@@ -17,20 +17,24 @@ const BlogDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchBlogs = async () => {
-    setLoading(true);
-    try {
-      const response = await getBlogs();
-      if (response.success) {
-        setBlogs(response.data);
-      } else {
-        console.error("Failed to fetch blogs:", response.message);
-      }
-    } catch (error) {
-      console.error("Error fetching blogs:", error);
-    } finally {
-      setLoading(false);
+  setLoading(true);
+  try {
+    const response = await getBlogs();
+    if (response.success) {
+      const sortedBlogs = response.data.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+      setBlogs(sortedBlogs);
+    } else {
+      console.error("Failed to fetch blogs:", response.message);
     }
-  };
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchBlogs();

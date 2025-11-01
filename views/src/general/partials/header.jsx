@@ -25,11 +25,9 @@ export default function Header() {
     { to: "/", label: "Home" },
     { to: "/book-a-consultation", label: "Book Consultation" },
      {
-      label: "Our Services",
+      label: "Resources",
       dropdown: [
-        { to: "/web-development", label: "Web Development" },
-        { to: "/branding", label: "Branding" },
-        { to: "/ui-ux", label: "UI/UX Design" },
+        { to: "/blog", label: "Blogs" },
       ],
     },
     { to: "/about-us", label: "About" },

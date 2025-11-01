@@ -15,6 +15,7 @@ import Login from "./auth/login";
 import Page from "./general/page";
 import Book from "./general/book";
 import Blog from "./general/blog";
+import SingleBlog from "./general/singleBlog";
 
 // Layout wrapper to conditionally hide header/footer
 function Layout({ children }) {
@@ -45,6 +46,7 @@ export default function App() {
           <Route path="/page/:slug" element={<Page />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<SingleBlog />} />
           <Route path="/book-a-consultation" element={<Book />} />
           <Route path="/admin/login" element={<Login />} />
           {/* Catch-all route for 404 */}

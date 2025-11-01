@@ -8,7 +8,7 @@ const { createAdminContactForm } = require("../controllers/admin/contact");
 const { createPageController, getPagesController, updatePageController, getPageByIdController, getPageBySlugController } = require("../controllers/admin/page");
 const { createConsultationBooking, verifyConsultationTransaction, fetchAllConsultationBookings, consultationPrepared, updateConsultationBooking } = require("../controllers/admin/consultation");
 const { paystackWebhook } = require("../utilities/paystackWebhook");
-const { createBlog, getBlogController, deleteBlogController, updateBlogController } = require("../controllers/admin/bolg");
+const { createBlog, getBlogController, deleteBlogController, updateBlogController, getBlogBySlugController, addBlogCommentController, getCommentsByBlogIdController } = require("../controllers/admin/bolg");
 const generalRoute = express.Router();
 
 
@@ -39,7 +39,10 @@ generalRoute.post("/consultation-prepard" ,consultationPrepared)
 generalRoute.put("/consultation-reschedule" ,updateConsultationBooking)
 generalRoute.post("/createBlog" ,createBlog)
 generalRoute.get("/getBlog" ,getBlogController)
+generalRoute.post("/addcomment" ,addBlogCommentController)
+generalRoute.get("/getcomment/:blog_id" ,getCommentsByBlogIdController)
 generalRoute.put("/updateBlog/:id" ,updateBlogController)
+generalRoute.get("/getslug/:slug" ,getBlogBySlugController)
 generalRoute.delete("/deleteBlog/:id" ,deleteBlogController)
 generalRoute.get("/get-consultation" ,fetchAllConsultationBookings)
 generalRoute.post("/webhook",paystackWebhook);
