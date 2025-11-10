@@ -6,7 +6,8 @@ const {
   updateBlogById, 
   getBlogBySlug, 
   insertBlogComment,
-  getCommentsByBlogId
+  getCommentsByBlogId,
+  incrementBlogViewsById
 } = require("../../utilities/blog");
 
 
@@ -342,6 +343,43 @@ const getBlogBySlugController = asyncHandler(async (req, res) => {
   }
 });
 
+const incrementBlogViewsController = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || isNaN(id)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid or missing blog ID.",
+    });
+  }
+
+  try {
+    const result = await incrementBlogViewsById(id);
+
+    if (result.success) {
+      return res.status(200).json({
+        success: true,
+        message: result.message || "Blog views incremented successfully.",
+        updatedId: result.updatedId || id,
+        debug: result,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: result.message || "Blog not found.",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to increment blog views due to server error.",
+      error: error.message || String(error),
+    });
+  }
+});
+
+
+
 module.exports = {
   createBlog,
   getBlogController,
@@ -350,4 +388,6 @@ module.exports = {
   getBlogBySlugController,
   addBlogCommentController,
   getCommentsByBlogIdController,
+  incrementBlogViewsController
+
 };

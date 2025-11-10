@@ -269,3 +269,39 @@ export const getCommentsByBlogId = async (blog_id) => {
     };
   }
 };
+
+// Increment blog views by ID
+export const incrementBlogViews = async (id) => {
+  if (!id || isNaN(id)) {
+    return {
+      success: false,
+      message: "Invalid or missing blog ID.",
+    };
+  }
+
+  try {
+    const response = await axios.put(`/api/increment-views/${id}`);
+
+    const payload = response.data;
+
+    return {
+      success: payload?.success ?? false,
+      message: payload?.message || "Blog views incremented successfully!",
+      updatedId: payload?.updatedId || id,
+    };
+  } catch (error) {
+    console.error(
+      `Incrementing views for blog ID ${id} failed:`,
+      error.response?.data || error.message
+    );
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message ||
+        `An error occurred while incrementing views for blog ID ${id}.`,
+      error: error.response?.data || error.message,
+    };
+  }
+};
+

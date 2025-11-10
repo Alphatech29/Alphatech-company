@@ -202,6 +202,42 @@ const getBlogBySlug = async (slug) => {
   }
 };
 
+// Increment blog views by ID
+const incrementBlogViewsById = async (id) => {
+  try {
+    const [result] = await pool.query(
+      `UPDATE blogs
+       SET views = views + 1
+       WHERE id = ?`,
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      return {
+        success: false,
+        message: "No blog found with the given ID",
+      };
+    }
+
+    console.log(`Views incremented for blog ID: ${id}`);
+
+    return {
+      success: true,
+      message: "Blog views incremented successfully",
+      updatedId: id,
+    };
+  } catch (error) {
+    console.error("Error incrementing blog views:", error);
+
+    return {
+      success: false,
+      message: "Failed to increment blog views",
+      error: error.message || error,
+    };
+  }
+};
+
+
 module.exports = {
   insertBlog,
   getBlogs,
@@ -210,4 +246,5 @@ module.exports = {
   getBlogBySlug,
   insertBlogComment,
   getCommentsByBlogId,
+  incrementBlogViewsById,
 };

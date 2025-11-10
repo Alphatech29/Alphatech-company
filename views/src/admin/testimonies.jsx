@@ -9,6 +9,7 @@ import {
 } from "../utilities/testimonies";
 import SweetAlert from "../utilities/sweetAlert";
 import { formatDate } from "../utilities/formatDate";
+import Pagination from "../utilities/pagination";
 
 const Testimonies = () => {
   const [testimonies, setTestimonies] = useState([]);
@@ -24,7 +25,11 @@ const Testimonies = () => {
     rating: "",
   });
 
-  // Fetch testimonies on mount
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 21;
+
+  // Fetch testimonies
   useEffect(() => {
     const fetchTestimonies = async () => {
       setLoading(true);
@@ -48,7 +53,7 @@ const Testimonies = () => {
     fetchTestimonies();
   }, []);
 
-  // Filter by name or position
+  // Filtered testimonies by name or position
   const filteredTestimonies = useMemo(() => {
     return testimonies.filter(
       (t) =>
@@ -57,7 +62,20 @@ const Testimonies = () => {
     );
   }, [testimonies, searchTerm]);
 
-  // Add new testimony
+  // Pagination logic
+  const totalPages = Math.ceil(filteredTestimonies.length / itemsPerPage);
+
+  const currentTestimonies = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredTestimonies.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredTestimonies, currentPage]);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
+  // Add testimony
   const handleAddTestimony = async () => {
     const { name, position, message, rating } = newTestimony;
 
@@ -88,16 +106,13 @@ const Testimonies = () => {
           created_at: new Date(),
           ...newTestimony,
         };
-
         setTestimonies((prev) =>
           [...prev, newItem].sort(
             (a, b) => new Date(b.created_at) - new Date(a.created_at)
           )
         );
-
         setModalOpen(false);
         setNewTestimony({ name: "", position: "", message: "", rating: "" });
-
         await SweetAlert.alert("Success", response.message, "success");
       } else {
         await SweetAlert.alert("Error", response.message, "error");
@@ -116,24 +131,25 @@ const Testimonies = () => {
 
   // Delete testimony
   const handleDeleteTestimony = async (id) => {
-
     const confirm = await SweetAlert.confirm(
       "Are you sure?",
       "This action will permanently delete the testimony.",
       "Yes"
     );
-
     if (!confirm) return;
 
     setLoading(true);
     try {
       const response = await deleteTestimony(id);
-
       if (response.success) {
         setTestimonies((prev) =>
           prev.filter((t) => t.id.toString() !== id.toString())
         );
-        await SweetAlert.alert("Deleted!", "Testimony deleted successfully.", "success");
+        await SweetAlert.alert(
+          "Deleted!",
+          "Testimony deleted successfully.",
+          "success"
+        );
       } else {
         await SweetAlert.alert("Error", response.message, "error");
       }
@@ -147,6 +163,7 @@ const Testimonies = () => {
 
   return (
     <div className="min-h-screen py-5 relative">
+      {/* Header & Search */}
       <div>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
           <h1 className="text-2xl font-extrabold text-gray-900">
@@ -170,13 +187,13 @@ const Testimonies = () => {
           <div className="text-center text-gray-600 mt-20">
             <p className="text-xl font-medium">Loading...</p>
           </div>
-        ) : filteredTestimonies.length === 0 ? (
+        ) : currentTestimonies.length === 0 ? (
           <div className="text-center text-gray-600 mt-20">
             <p className="text-xl font-medium">No testimonies found</p>
           </div>
         ) : (
           <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-3">
-            {filteredTestimonies.map((t) => (
+            {currentTestimonies.map((t) => (
               <div
                 key={t.id || t._id}
                 className="bg-white/80 backdrop-blur-lg shadow-xl hover:shadow-2xl rounded-md p-8 border border-gray-100 relative"
@@ -217,6 +234,17 @@ const Testimonies = () => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-6 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
           </div>
         )}
       </div>

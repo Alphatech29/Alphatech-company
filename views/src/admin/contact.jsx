@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { NavLink } from "react-router-dom";
 import { getContactForms, deleteContactForm } from "../utilities/contactUs";
 import SweetAlert from "../utilities/sweetAlert";
+import Pagination from "../utilities/pagination";
 
 // -------------------- Helper Functions --------------------
 const formatName = (name) => {
@@ -40,6 +41,10 @@ const ContactDashboard = () => {
   const [error, setError] = useState("");
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [deleting, setDeleting] = useState(false);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 21;
 
   // -------------------- Fetch Messages --------------------
   useEffect(() => {
@@ -88,6 +93,18 @@ const ContactDashboard = () => {
     }
   };
 
+  // -------------------- Pagination Logic --------------------
+  const totalPages = Math.ceil(messages.length / itemsPerPage);
+  const currentMessages = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return messages.slice(startIndex, startIndex + itemsPerPage);
+  }, [currentPage, messages]);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
   return (
     <div className="min-h-screen py-8">
       <div>
@@ -112,7 +129,7 @@ const ContactDashboard = () => {
         {/* Messages Grid */}
         {!loading && !error && messages.length > 0 && (
           <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-3">
-            {messages.map((msg) => (
+            {currentMessages.map((msg, index) => (
               <div
                 key={msg.id}
                 className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition duration-200"
@@ -157,6 +174,13 @@ const ContactDashboard = () => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-6 flex justify-center">
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
           </div>
         )}
       </div>

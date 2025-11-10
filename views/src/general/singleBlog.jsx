@@ -17,6 +17,7 @@ import {
   getBlogs,
   addBlogComment,
   getCommentsByBlogId,
+  incrementBlogViews
 } from "../utilities/blog";
 import { formatDate } from "../utilities/formatDate";
 import {
@@ -63,7 +64,10 @@ const SingleBlog = () => {
           const fetchedBlog = result.data;
           setBlog(fetchedBlog);
 
+          // 🔥 Increment blog views using arithmetic expression
           if (fetchedBlog.id) {
+            await incrementBlogViews(fetchedBlog.id);
+
             const commentsResponse = await getCommentsByBlogId(fetchedBlog.id);
             if (commentsResponse.success) {
               const formattedComments = commentsResponse.data.map((c) => ({

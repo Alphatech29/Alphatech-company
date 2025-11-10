@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import {
   getFaqsData,
@@ -7,6 +7,7 @@ import {
   deleteFaqDataById,
 } from "../utilities/faqs";
 import SweetAlert from "../utilities/sweetAlert";
+import Pagination from "../utilities/pagination";
 
 const Faqs = () => {
   const [faqs, setFaqs] = useState([]);
@@ -14,6 +15,10 @@ const Faqs = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentFaq, setCurrentFaq] = useState({ id: null, question: "", answer: "" });
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 21;
 
   // Fetch FAQs on mount
   useEffect(() => {
@@ -34,6 +39,21 @@ const Faqs = () => {
 
     fetchFaqs();
   }, []);
+
+  const filteredFaqs = useMemo(() => faqs, [faqs]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredFaqs.length / itemsPerPage);
+  const currentFaqs = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredFaqs.slice(startIndex, endIndex);
+  }, [currentPage, filteredFaqs]);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
 
   const handleAdd = () => {
     setCurrentFaq({ id: null, question: "", answer: "" });
@@ -118,17 +138,17 @@ const Faqs = () => {
       {loading && <p>Loading FAQs...</p>}
 
       {/* FAQ Cards */}
-      {!loading && faqs.length === 0 && <p>No FAQs available.</p>}
+      {!loading && filteredFaqs.length === 0 && <p>No FAQs available.</p>}
 
       <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-3">
-        {faqs.map((faq, index) => (
+        {currentFaqs.map((faq, index) => (
           <div
             key={faq.id}
             className="group relative bg-white border border-gray-200 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
           >
             <div className="bg-gradient-to-r from-primary-200 to-primary-700 text-white p-4">
               <h2 className="text-base font-semibold">
-                {index + 1}. {faq.question}
+                {index + 1 + (currentPage - 1) * itemsPerPage}. {faq.question}
               </h2>
             </div>
 
@@ -152,6 +172,13 @@ const Faqs = () => {
           </div>
         ))}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex justify-center">
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        </div>
+      )}
 
       {/* Modal */}
       {showModal && (

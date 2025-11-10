@@ -4,21 +4,18 @@ import { FaCalendarAlt, FaTags } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { getBlogs } from "../utilities/blog";
 import { formatDate } from "../utilities/formatDate";
-import  Pagination  from "../utilities/pagination";
 
-const Blog = () => {
+const ShortBlog = () => {
   const [blogs, setBlogs] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const blogsPerPage = 16;
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         const response = await getBlogs();
         if (response.success) {
-          const sortedBlogs = response.data.sort(
-            (a, b) => new Date(b.created_at) - new Date(a.created_at)
-          );
+          const sortedBlogs = response.data
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .slice(0, 4); // 👈 Only take the 4 most recent posts
           setBlogs(sortedBlogs);
         }
       } catch (error) {
@@ -29,51 +26,8 @@ const Blog = () => {
     fetchBlogs();
   }, []);
 
-  // Pagination Logic
-  const totalPages = Math.ceil(blogs.length / blogsPerPage);
-  const startIndex = (currentPage - 1) * blogsPerPage;
-  const currentBlogs = blogs.slice(startIndex, startIndex + blogsPerPage);
-
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
   return (
     <div>
-      {/* HERO SECTION */}
-      <section className="min-h-[70vh] relative bg-gradient-to-br from-primary-950 via-primary-800 to-primary-300 text-white py-20 px-6 md:px-16 flex items-center justify-center">
-        <div className="max-w-5xl mx-auto text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-5xl md:text-6xl font-bold mb-4"
-          >
-            Welcome to Our Blog
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-lg text-primary-100 max-w-2xl mx-auto mb-6"
-          >
-            Explore insights, tutorials, and the latest trends in technology,
-            design, and innovation — all in one place.
-          </motion.p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            className="bg-white text-primary-600 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-primary-100 transition"
-          >
-            Explore Posts
-          </motion.button>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gray-50 rounded-t-3xl"></div>
-      </section>
-
       {/* BLOG LIST SECTION */}
       <section className="py-10 px-4 md:px-10 bg-gray-50">
         <div className="max-w-6xl mx-auto text-center mb-12">
@@ -87,7 +41,7 @@ const Blog = () => {
         </div>
 
         <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-4">
-          {currentBlogs.map((blog, index) => (
+          {blogs.map((blog, index) => (
             <motion.div
               key={blog.id}
               initial={{ opacity: 0, y: 40 }}
@@ -101,8 +55,9 @@ const Blog = () => {
                   alt={blog.title}
                   className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
                 />
+
                 <div className="p-6">
-                  <h3 className="text-lg font-semibold line-clamp-2 text-gray-900 mb-2 hover:text-primary-600 transition">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 hover:text-primary-600 transition">
                     {blog.title}
                   </h3>
                   <p
@@ -120,23 +75,25 @@ const Blog = () => {
                       <span>{blog.category}</span>
                     </div>
                   </div>
+                  <div>
+                    <NavLink to={`/blog/${blog.slug}`} className="text-primary-600 hover:shadow-md text-sm font-medium mt-4 inline-block">
+                      Read More
+                    </NavLink>
+                    
+                  </div>
                 </div>
               </NavLink>
             </motion.div>
           ))}
         </div>
-
-        {/* Pagination Component */}
-        {totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        )}
+        <div className="text-center mt-8">
+          <NavLink to="/blog" className="mt-8 inline-block px-6 py-2 bg-gradient-to-r from-purple-800 to-secondary-500  text-white font-medium rounded-lg hover:bg-primary-700 transition">
+            View All Blogs
+          </NavLink>
+        </div>
       </section>
     </div>
   );
 };
 
-export default Blog;
+export default ShortBlog;

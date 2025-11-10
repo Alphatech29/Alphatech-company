@@ -6,6 +6,7 @@ import { getPortfolioData, addPortfolioData } from "../utilities/portfolio";
 import SweetAlert from "../utilities/sweetAlert";
 import { formatDate } from "../utilities/formatDate";
 import { formatAmount } from "../utilities/formatAmount";
+import  Pagination  from "../utilities/pagination";
 
 export default function PortfolioDashboard() {
   const [portfolios, setPortfolios] = useState([]);
@@ -13,6 +14,11 @@ export default function PortfolioDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+   // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 21;
+
 
   const [newPortfolio, setNewPortfolio] = useState({
     title: "",
@@ -58,6 +64,19 @@ export default function PortfolioDashboard() {
       )
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }, [portfolios, searchTerm]);
+
+   // Pagination logic
+  const totalPages = Math.ceil(filteredPortfolios.length / itemsPerPage);
+  const currentPortfolios = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredPortfolios.slice(startIndex, endIndex);
+  }, [currentPage, filteredPortfolios]);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
 
   const handleAddPortfolio = async () => {
     const {
@@ -147,7 +166,7 @@ export default function PortfolioDashboard() {
   };
 
   return (
-    <div className="min-h-screen py-5 relative">
+     <div className="min-h-screen py-5 relative">
       <div>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
           <h1 className="text-2xl font-extrabold text-gray-900">Portfolio Dashboard</h1>
@@ -174,60 +193,71 @@ export default function PortfolioDashboard() {
             <p className="text-xl font-medium">No data found</p>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-3">
-            {filteredPortfolios.map((p) => (
-              <div
-                key={p.id}
-                className="bg-white/80 backdrop-blur-lg shadow-xl hover:shadow-2xl rounded-md p-8 border border-gray-100 relative overflow-clip"
-              >
-                <div className="flex absolute top-0 left-0 right-0 justify-between">
-                  <span className="px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm bg-primary-200 text-primary-800">
-                    {p.category}
-                  </span>
-                </div>
-
-                <div className="flex items-center space-x-3 mb-6 mt-4">
-                  <div className="bg-gradient-to-br from-primary-300 to-primary-700 text-white p-1 rounded-2xl shadow-md">
-                    <img
-                      src={p.image_url}
-                      alt={p.title}
-                      className="rounded-2xl shadow-md w-12 h-12 object-cover"
-                    />
+          <>
+            <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-3">
+              {currentPortfolios.map((p) => (
+                <div
+                  key={p.id}
+                  className="bg-white/80 backdrop-blur-lg shadow-xl hover:shadow-2xl rounded-md p-8 border border-gray-100 relative overflow-clip"
+                >
+                  <div className="flex absolute top-0 left-0 right-0 justify-between">
+                    <span className="px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm bg-primary-200 text-primary-800">
+                      {p.category}
+                    </span>
                   </div>
-                  <div>
-                    <p className="font-semibold text-base text-gray-900">{p.title}</p>
-                    <p className="text-sm text-gray-500 flex items-center">
-                      <FaCalendarAlt className="mr-1 text-gray-400" /> {formatDate(p.date_completed)}
+
+                  <div className="flex items-center space-x-3 mb-6 mt-4">
+                    <div className="bg-gradient-to-br from-primary-300 to-primary-700 text-white p-1 rounded-2xl shadow-md">
+                      <img
+                        src={p.image_url}
+                        alt={p.title}
+                        className="rounded-2xl shadow-md w-12 h-12 object-cover"
+                      />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-base text-gray-900">{p.title}</p>
+                      <p className="text-sm text-gray-500 flex items-center">
+                        <FaCalendarAlt className="mr-1 text-gray-400" /> {formatDate(p.date_completed)}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 text-gray-700">
+                    <p>
+                      <strong>CEO/MD:</strong> {p.owner}
+                    </p>
+                    <p>
+                      <strong>Project Amount:</strong> {formatAmount(p.amount)}
+                    </p>
+                    <p>
+                      <strong>Starting Date:</strong> {formatDate(p.start_date)}
+                    </p>
+                    <p>
+                      <strong>Delivery Date:</strong> {formatDate(p.date_completed)}
                     </p>
                   </div>
-                </div>
 
-                <div className="space-y-3 text-gray-700">
-                  <p>
-                    <strong>CEO/MD:</strong> {p.owner}
-                  </p>
-                  <p>
-                    <strong>Project Amount:</strong> {formatAmount(p.amount)}
-                  </p>
-                  <p>
-                    <strong>Starting Date:</strong> {formatDate(p.start_date)}
-                  </p>
-                  <p>
-                    <strong>Delivery Date:</strong> {formatDate(p.date_completed)}
-                  </p>
+                  <div className="flex items-end justify-end">
+                    <button
+                      onClick={() => setSelectedPortfolio(p)}
+                      className="mt-4 px-6 py-2.5 text-sm rounded-xl bg-gradient-to-r from-primary-200 to-primary-700 text-white font-medium shadow-md hover:shadow-lg hover:scale-105 transition"
+                    >
+                      View Details
+                    </button>
+                  </div>
                 </div>
+              ))}
+            </div>
 
-                <div className="flex items-end justify-end">
-                  <button
-                    onClick={() => setSelectedPortfolio(p)}
-                    className="mt-4 px-6 py-2.5 text-sm rounded-xl bg-gradient-to-r from-primary-200 to-primary-700 text-white font-medium shadow-md hover:shadow-lg hover:scale-105 transition"
-                  >
-                    View Details
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
+          </>
         )}
       </div>
 
