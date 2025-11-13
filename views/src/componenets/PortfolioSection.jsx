@@ -99,7 +99,7 @@ export default function PortfolioSection() {
                 <img
                   src={project.image_url}
                   alt={project.title}
-                  className="w-full h-64 object-cover transform transition-transform duration-700 ease-out"
+                  className="w-full h-[350px] object-cover transform transition-transform duration-700 ease-out"
                   loading="lazy"
                 />
 
