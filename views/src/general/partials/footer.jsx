@@ -97,7 +97,6 @@ export default function Footer() {
           <ul className="mt-4 space-y-2 text-primary-300 mobile:text-sm text-base">
             {[
               { name: "Pricing", href: "/pricing" },
-              { name: "Our Services", href: "/services" },
                { name: "Book Consultationt", href: "/book-a-consultation" },
               { name: "About", href: "/about-us" },
               { name: "Contact", href: "/contact-us" },

@@ -17,6 +17,7 @@ import ConsultationDetails from "../admin/consultationDetails";
 import CreateBlog from "../admin/createBlog";
 import BlogDashboard from "../admin/blog";
 import EditBlog from "../admin/editBlog ";
+import Founder from "../admin/founder";
 //import Home from "../general/shop/index";
 
 
@@ -39,6 +40,7 @@ export default function AdminRoute() {
           <Route path="blog" element={<BlogDashboard/>}></Route>
           <Route path="blog/edit/:id" element={<EditBlog />} />
          <Route path="consultation" element={<Consultation/>}></Route>
+          <Route path="ceo-bio" element={<Founder/>}></Route>
          <Route path="consultation/details/:id" element={<ConsultationDetails/>}></Route>
          <Route path="*" element={<NotFound/>}></Route>
       </Route>

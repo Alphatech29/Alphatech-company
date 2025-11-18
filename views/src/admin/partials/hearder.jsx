@@ -65,6 +65,23 @@ export default function Header({ toggleSidebar }) {
                     Profile
                   </NavLink>
                 </li>
+
+                 <li>
+                  <NavLink
+                    to="/dashboard/ceo-bio"
+                    className={({ isActive }) =>
+                      `block px-4 py-2 hover:bg-gray-100 ${
+                        isActive ? "text-purple-600 font-semibold" : ""
+                      }`
+                    }
+                    onClick={() => setOpen(false)}
+                  >
+                    Ceo's Bio
+                  </NavLink>
+                </li>
+
+
+
                 <li>
                   <NavLink
                     to="/dashboard/settings"

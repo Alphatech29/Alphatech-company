@@ -9,6 +9,7 @@ const { createPageController, getPagesController, updatePageController, getPageB
 const { createConsultationBooking, verifyConsultationTransaction, fetchAllConsultationBookings, consultationPrepared, updateConsultationBooking } = require("../controllers/admin/consultation");
 const { paystackWebhook } = require("../utilities/paystackWebhook");
 const { createBlog, getBlogController, deleteBlogController, updateBlogController, getBlogBySlugController, addBlogCommentController, getCommentsByBlogIdController, incrementBlogViewsController } = require("../controllers/admin/bolg");
+const { fetchFounders, modifyFounder } = require("../controllers/admin/founder");
 const generalRoute = express.Router();
 
 
@@ -48,6 +49,8 @@ generalRoute.delete("/deleteBlog/:id" ,deleteBlogController)
 generalRoute.get("/get-consultation" ,fetchAllConsultationBookings)
 generalRoute.post("/webhook",paystackWebhook);
 generalRoute.get("/verify-transaction",verifyConsultationTransaction);
+generalRoute.get("/ceo-bio" ,fetchFounders);
+generalRoute.put("/update-founder/:id" ,modifyFounder);
 
 
 module.exports = generalRoute;
